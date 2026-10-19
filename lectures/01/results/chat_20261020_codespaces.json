@@ -1,0 +1,25 @@
+{
+  "kind": "live_api_chat_cli",
+  "timestamp_utc": "2026-10-19T15:47:43.564613+00:00",
+  "environment": {
+    "platform": "Linux",
+    "python": "3.12.15"
+  },
+  "model": "gemini-3.5-flash-lite",
+  "questions": [
+    "今回の合言葉は「青い栞47」です。『覚えました』だけ返してください。",
+    "先ほど伝えた合言葉を、そのまま答えてください。"
+  ],
+  "returncode": 0,
+  "stdout": "[model] gemini-3.5-flash-lite\n会話モードです。/exit で終了します。履歴はこの実行中だけ保持します。\n質問> 覚えました\n[tokens] input=21 output=2\n質問> 青い栞47\n[tokens] input=38 output=5\n質問> ",
+  "stderr": "",
+  "elapsed_seconds": 18.204,
+  "second_answer": "青い栞47",
+  "context_marker_found": true,
+  "source_sha256": {
+    "app/ask.py": "9d56ef3fd82fa46def507d769e70dc8ad6d84def7fe3cb880d27ff425483ab6c",
+    "scripts/day1_compare.py": "f7ec20bc6b65cae92312c5aa34b8c17edeca1b8d2dba004b2b7e57d470fc8905",
+    "tests/test_ask.py": "ba766bd24eed5a27f18e65dd92ddbe18f90cd32554258eb6197358715341092d",
+    "tests/test_day1_compare.py": "e42c672a0ed7e49c8c74303e181d4406ed6e72a993aa528aeff31ac2d14b75bc"
+  }
+}
