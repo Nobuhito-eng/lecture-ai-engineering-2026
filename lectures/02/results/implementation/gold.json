@@ -1,0 +1,152 @@
+{
+  "学習会の開催時間は？": {
+    "needs_review": false,
+    "must_include": [
+      "土曜",
+      "10:00",
+      "12:00"
+    ]
+  },
+  "学習会の曜日と開始・終了時刻を知りたいです": {
+    "needs_review": false,
+    "must_include": [
+      "土曜",
+      "10:00",
+      "12:00"
+    ]
+  },
+  "何曜日の何時から何時まで行いますか": {
+    "needs_review": false,
+    "must_include": [
+      "土曜",
+      "10:00",
+      "12:00"
+    ]
+  },
+  "集まる場所は？": {
+    "needs_review": false,
+    "must_include": [
+      "地域交流センター",
+      "第2会議室"
+    ]
+  },
+  "集合する施設名と部屋名を教えてください": {
+    "needs_review": false,
+    "must_include": [
+      "地域交流センター",
+      "第2会議室"
+    ]
+  },
+  "学習会はどこに行けば参加できますか": {
+    "needs_review": false,
+    "must_include": [
+      "地域交流センター",
+      "第2会議室"
+    ]
+  },
+  "参加料金の金額と払い方は？": {
+    "needs_review": false,
+    "must_include": [
+      "500",
+      "当日",
+      "現金"
+    ]
+  },
+  "1回分の料金と支払う時期・方法を知りたいです": {
+    "needs_review": false,
+    "must_include": [
+      "500",
+      "当日",
+      "現金"
+    ]
+  },
+  "当日の参加費と決済方法は何ですか": {
+    "needs_review": false,
+    "must_include": [
+      "500",
+      "当日",
+      "現金"
+    ]
+  },
+  "当日の持参品は？": {
+    "needs_review": false,
+    "must_include": [
+      "ノートパソコン",
+      "充電器"
+    ]
+  },
+  "参加時に用意して持っていくものを教えてください": {
+    "needs_review": false,
+    "must_include": [
+      "ノートパソコン",
+      "充電器"
+    ]
+  },
+  "自分で持ってくる機器は何ですか": {
+    "needs_review": false,
+    "must_include": [
+      "ノートパソコン",
+      "充電器"
+    ]
+  },
+  "人数制限と申込の手順は？": {
+    "needs_review": false,
+    "must_include": [
+      "12",
+      "申込フォーム",
+      "先着順"
+    ]
+  },
+  "各回の募集人数と参加申請の方法を知りたいです": {
+    "needs_review": false,
+    "must_include": [
+      "12",
+      "申込フォーム",
+      "先着順"
+    ]
+  },
+  "申込は何名まで、どの窓口で受け付けますか": {
+    "needs_review": false,
+    "must_include": [
+      "12",
+      "申込フォーム",
+      "先着順"
+    ]
+  },
+  "欠席した場合に録画を見られますか": {
+    "needs_review": true,
+    "must_include": [
+      "確認"
+    ]
+  },
+  "オンラインでも参加できますか": {
+    "needs_review": true,
+    "must_include": [
+      "確認"
+    ]
+  },
+  "参加費に学生割引はありますか": {
+    "needs_review": true,
+    "must_include": [
+      "確認"
+    ]
+  },
+  "定員を超えたらキャンセル待ちはできますか": {
+    "needs_review": true,
+    "must_include": [
+      "確認"
+    ]
+  },
+  "持参するパソコンのOSに指定はありますか": {
+    "needs_review": true,
+    "must_include": [
+      "確認"
+    ]
+  },
+  "会場は車いすで利用できますか": {
+    "needs_review": true,
+    "must_include": [
+      "確認"
+    ]
+  }
+}
