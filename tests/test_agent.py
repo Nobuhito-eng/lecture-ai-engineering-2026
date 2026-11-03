@@ -8,7 +8,7 @@ TestModel は実際のLLMを呼ばない偽モデルで、登録されたツー�
 from pydantic_ai.messages import ToolCallPart, ToolReturnPart
 from pydantic_ai.models.test import TestModel
 
-from app.agent import agent
+from app.agent import agent, run_with_approval
 
 BASE_TOOLS = {"search_glossary", "get_lecture_summary"}
 
@@ -19,8 +19,9 @@ def _parts(result, kind):
 
 def test_base_tools_are_registered_and_called():
     model = TestModel()
-    with agent.override(model=model):
-        result = agent.run_sync("LoRAとは？")
+    # 第3回 宿題（実装）: 承認が必要なツール（save_learning_log）は1回目の実行では止まり、
+    # 戻り値がまだ無い。ここでは拒否して続きを実行し、全部の呼び出しに戻り値がそろうことを確かめる
+    result = run_with_approval(agent, "LoRAとは？", model, approve=lambda call: False)
 
     offered = {t.name for t in model.last_model_request_parameters.function_tools}
     assert BASE_TOOLS <= offered  # 演習でツールを足しても壊れないよう「含む」で判定
