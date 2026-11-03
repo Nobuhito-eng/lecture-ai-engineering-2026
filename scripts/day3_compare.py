@@ -169,33 +169,47 @@ def variant_diff(variant: Variant) -> str:
 # --- 1回の実行と記録 ------------------------------------------------------------
 
 LECTURE_REF = re.compile(r"第\s*[0-9０-９]+\s*回")
+# 最後の行が「（第2回）」「関係する回：第2回」「第1回（関連回：第1回）」のような、回を示すだけの行か
+LECTURE_FOOTER = re.compile(r"^[（(]?\s*((関係|関連)(する)?回\s*[:：]\s*)?第\s*[0-9０-９]+\s*回")
 
 
-def _last_lines(text: str, n: int = 3) -> str:
-    lines = [line for line in text.strip().splitlines() if line.strip()]
-    return "\n".join(lines[-n:])
+def _last_line(text: str) -> str:
+    lines = [line.strip() for line in text.strip().splitlines() if line.strip() and set(line.strip()) != {"-"}]
+    return lines[-1] if lines else ""
 
 
-def checks_for(question_id: str, output: str, calls: list[dict]) -> dict:
+def _quiz_answer_heads(returns: list[dict]) -> list[str]:
+    """make_quiz が返した答え（定義文）の書き出し。回答に答えまで書いたかを見るのに使う。"""
+    heads = []
+    for r in returns:
+        if r["tool"] == "make_quiz" and (m := re.search(r'"answer": "([^"]{1,20})', r["content_head"])):
+            heads.append(m.group(1))
+    return heads
+
+
+def checks_for(question_id: str, output: str, calls: list[dict], returns: list[dict] | None = None) -> dict:
     """回答とツール呼び出しの簡単な自動チェック（目安。最終判断は回答本文を読んで行う）。"""
     names = [c["tool"] for c in calls]
+    plain = output.replace("**", "")  # Markdown の太字で語が分断されないように
     result = {
         "search_calls": names.count("search_glossary"),
         "search_queries": [c["args"].get("query") for c in calls if c["tool"] == "search_glossary"],
         "summary_calls": names.count("get_lecture_summary"),
         "quiz_calls": names.count("make_quiz"),
         "save_calls": names.count("save_learning_log"),
-        "lecture_ref_in_last_lines": bool(LECTURE_REF.search(_last_lines(output))),
-        "lecture_ref_anywhere": bool(LECTURE_REF.search(output)),
+        "lecture_footer": bool(LECTURE_FOOTER.search(_last_line(plain))),
+        "lecture_ref_anywhere": bool(LECTURE_REF.search(plain)),
         "output_chars": len(output),
     }
     if question_id == "levels":
-        result["has_3_levels"] = all(w in output for w in ("基礎", "実装", "発展"))
-        result["says_one_is_enough"] = bool(re.search(r"(どれか|いずれか)\s*(1|１|一)\s*つ", output))
+        result["has_3_levels"] = all(w in plain for w in ("基礎", "実装", "発展"))
+        result["says_one_is_enough"] = bool(re.search(r"(どれか|いずれか)\s*(1|１|一)\s*つ", plain))
     if question_id == "lora":
-        result["mentions_quantization"] = "量子化" in output
+        result["mentions_quantization"] = "量子化" in plain
     if question_id == "quiz":
         result["quiz_lecture_args"] = [c["args"].get("lecture") for c in calls if c["tool"] == "make_quiz"]
+        heads = _quiz_answer_heads(returns or [])
+        result["quiz_answer_shown"] = bool(heads) and any(h in plain for h in heads)
     return result
 
 
@@ -302,9 +316,19 @@ def run_cli_save(answer: str, out_path: Path) -> dict:
     before = set(log_dir.glob("*.md")) if log_dir.exists() else set()
     command = [sys.executable, "-m", "app.agent", "--trace", SAVE_QUESTION]
     started = datetime.now(JST)
-    proc = subprocess.run(
-        command, input=f"{answer}\n", capture_output=True, text=True, cwd=ROOT, timeout=300, env=os.environ.copy()
-    )
+    busy = []  # 503・429 で失敗したら待って再実行する（基礎の実行と同じ方針）
+    for attempt in range(3):
+        proc = subprocess.run(
+            command, input=f"{answer}\n", capture_output=True, text=True, cwd=ROOT, timeout=300, env=os.environ.copy()
+        )
+        status = next((s for s in ("503", "429") if proc.returncode != 0 and f"（{s}）" in proc.stdout), None)
+        if status is None and not (proc.returncode != 0 and "レート制限" in proc.stdout):
+            break
+        busy.append(status or "429")
+        if attempt < 2:
+            wait = 30 if status == "503" else 60
+            print(f"    HTTP {busy[-1]}。{wait}秒待って再実行します（{attempt + 1}/2）")
+            time.sleep(wait)
     after = set(log_dir.glob("*.md")) if log_dir.exists() else set()
     new_files = sorted(after - before)
     lines = [
@@ -312,6 +336,7 @@ def run_cli_save(answer: str, out_path: Path) -> dict:
         f"# コマンド: uv run python -m app.agent --trace \"{SAVE_QUESTION}\"",
         f"# 確認への入力: {answer!r}",
         f"# 終了コード: {proc.returncode}",
+        f"# 混雑による再実行: {len(busy)}回 {busy if busy else ''}".rstrip(),
         "",
         proc.stdout.rstrip(),
     ]
@@ -353,9 +378,11 @@ def summarize(records: list[dict]) -> str:
         f"- 成功した実行: {len(ok)} 件、失敗: {len(failed)} 件",
         f"- モデル: {', '.join(sorted({r['model'] for r in records})) or '-'}",
         "- 数値は成功した実行の平均。自動チェックは目安で、最終判断は day3_runs.jsonl の回答本文で行う",
+        f"- 混雑（503）・レート制限（429）で再実行した回数: {sum(len(r.get('retries', [])) for r in ok)}",
+        "- 「最終行が第N回」は、最後の行が「（第2回）」「関係する回：第2回」のように回だけを示す行かどうか",
         "",
-        "| 変種 | 質問 | 成功/試行 | search回数 | requests | 入力tok | 出力tok | 末尾に第N回 | その他 |",
-        "|---|---|---:|---:|---:|---:|---:|---:|---|",
+        "| 変種 | 質問 | 成功/試行 | search回数 | requests | 入力tok | 出力tok | 最終行が第N回 | 本文に第N回 | その他 |",
+        "|---|---|---:|---:|---:|---:|---:|---:|---:|---|",
     ]
     for v in VARIANTS:
         for q in v.questions:
@@ -363,6 +390,8 @@ def summarize(records: list[dict]) -> str:
             if not group:
                 continue
             good = [r for r in group if r.get("ok")]
+            for r in good:  # チェックの改善が過去の記録にも反映されるよう、回答本文から計算し直す
+                r["checks"] = checks_for(q, r["output"], r["tool_calls"], r.get("tool_returns"))
             extra = []
             if q == "levels":
                 extra.append(f"3レベル {_rate([r['checks']['has_3_levels'] for r in good])}")
@@ -374,6 +403,7 @@ def summarize(records: list[dict]) -> str:
             if q == "quiz":
                 extra.append(f"make_quiz呼出 {_rate([r['checks']['quiz_calls'] > 0 for r in good])}")
                 extra.append(f"summary呼出 {_rate([r['checks']['summary_calls'] > 0 for r in good])}")
+                extra.append(f"答えまで表示 {_rate([r['checks']['quiz_answer_shown'] for r in good])}")
             saves = sum(r["checks"]["save_calls"] for r in good)
             if saves:
                 extra.append(f"save_learning_log {saves}回（拒否済み）")
@@ -383,7 +413,8 @@ def summarize(records: list[dict]) -> str:
                 f"| {_mean([r['usage']['requests'] for r in good])} "
                 f"| {_mean([r['usage']['input_tokens'] for r in good])} "
                 f"| {_mean([r['usage']['output_tokens'] for r in good])} "
-                f"| {_rate([r['checks']['lecture_ref_in_last_lines'] for r in good])} "
+                f"| {_rate([r['checks']['lecture_footer'] for r in good])} "
+                f"| {_rate([r['checks']['lecture_ref_anywhere'] for r in good])} "
                 f"| {'; '.join(extra)} |"
             )
     lines += ["", "## 変種の説明", ""]
@@ -466,7 +497,7 @@ def main() -> None:
         try:
             data, attempts = run_with_retry(lambda: run_one(target, QUESTIONS[question_id], model))
             record |= {"ok": True, "retries": attempts, **data}
-            record["checks"] = checks_for(question_id, data["output"], data["tool_calls"])
+            record["checks"] = checks_for(question_id, data["output"], data["tool_calls"], data["tool_returns"])
             print(f"    tools={[c['tool'] for c in data['tool_calls']]} requests={data['usage']['requests']}")
         except DailyQuotaExceeded:
             raise

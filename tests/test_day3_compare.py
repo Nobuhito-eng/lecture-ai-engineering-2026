@@ -53,12 +53,26 @@ def test_plan_runs_baseline_first_and_balances_reps():
 
 
 def test_checks_detect_lecture_reference_and_levels():
-    output = "基礎・実装・発展の3つで、どれか1つに取り組めば完了です。\n\n関係する回：第1回"
+    output = "基礎・実装・発展の3つで、どれか**1つ**に取り組めば完了です。\n\n---\n関係する回：第1回"
     calls = [{"tool": "search_glossary", "args": {"query": "3レベル"}}]
     c = d3.checks_for("levels", output, calls)
     assert c["search_calls"] == 1 and c["search_queries"] == ["3レベル"]
-    assert c["lecture_ref_in_last_lines"] and c["has_3_levels"] and c["says_one_is_enough"]
-    assert not d3.checks_for("levels", "基礎と実装があります。", [])["lecture_ref_in_last_lines"]
+    assert c["lecture_footer"] and c["has_3_levels"] and c["says_one_is_enough"]
+    for footer in ["（第2回）", "第1回（関連回：第1回）", "（関連する回：第1回）", "第2回"]:
+        assert d3.checks_for("lora", f"本文\n\n{footer}", [])["lecture_footer"], footer
+    # 本文の中で回に触れているだけなら「最終行が第N回」には数えない
+    woven = d3.checks_for("lora", "本文\n\nどちらも第2回で扱う内容です。", [])
+    assert woven["lecture_ref_anywhere"] and not woven["lecture_footer"]
+    assert not d3.checks_for("levels", "基礎と実装があります。", [])["lecture_footer"]
+
+
+def test_checks_detect_whether_quiz_answer_is_shown():
+    returns = [{"tool": "make_quiz", "content_head": '{"lecture": 2, "question": "「PEFT」の意味は？", '
+                '"answer": "モデルの全パラメータではなく、ごく一部"}'}]
+    calls = [{"tool": "make_quiz", "args": {"lecture": 2}}]
+    assert not d3.checks_for("quiz", "「PEFT」の意味は？考えてみてください。", calls, returns)["quiz_answer_shown"]
+    shown = "問題：「PEFT」の意味は？\n答え：モデルの全パラメータではなく、ごく一部だけを学習する手法"
+    assert d3.checks_for("quiz", shown, calls, returns)["quiz_answer_shown"]
 
 
 def test_run_one_records_calls_usage_and_denies_unrequested_save():
