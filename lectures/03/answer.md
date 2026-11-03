@@ -66,7 +66,7 @@
 
 **結果**
 
-- `uv run pytest -q`：Codespaces で **28 passed**（`lectures/03/results/pytest.txt`）。その後、自動チェックのテストを1件足して29件になった。
+- `uv run pytest -q`：Codespaces で **29 passed**（`lectures/03/results/pytest.txt`。最初の実行時は28件で、その後に自動チェックのテストを1件足した）。
 - 実モデルでの承認（y）：`uv run python -m app.agent --trace "LoRAとQLoRAの違いを用語集で調べて、学習ログに保存して"` に `y` を入力した（`lectures/03/results/cli_save_approve.txt`）。
 
   ```text
@@ -85,14 +85,36 @@
   ```
 
   検索2回（1回目の応答）→ 保存の依頼（2回目の応答）で止まり、承認後に続き（3回目の応答）を実行して回答した。`learning_log/` にファイルが1つ増え、承認画面に表示された本文と同じ内容が保存されていた。
-- 実モデルでの拒否（n）：1回目の実行はモデルの混雑（HTTP 503）で失敗し、モデルまで届かなかった（`lectures/03/results/cli_save_deny.txt`）。拒否したときに保存されず、拒否の理由がモデルに返ることは、TestModel のテストで確認している。
+- 実モデルでの拒否（n）：同じ質問に `n` を入力した（`lectures/03/results/cli_save_deny.txt`。1回目は混雑（HTTP 503）で失敗したため、やり直した）。
+
+  ```text
+  保存してよいですか？ [y/N]: [approval]    save_learning_log -> 拒否
+  学習ログへの保存が承認されなかったため、保存は行われませんでした。
+  …（LoRA と QLoRA の違いの回答本文）…
+  （関係する回：第2回）
+  --- trace ---
+  [tool call]   search_glossary({'query': 'LoRA'})
+  [tool call]   search_glossary({'query': 'QLoRA'})
+  [tool call]   save_learning_log({'title': 'LoRAとQLoRAの違い', 'content': '## LoRAとQLoRAの違い …', 'lecture': 2})
+  [tool return] save_learning_log -> 利用者が承認しなかったため、保存していません。保存しなかったことを利用者に伝えてください。…
+  [usage] RunUsage(… input_tokens=3309, output_tokens=407, requests=3, tool_calls=2)
+  ```
+
+  `learning_log/` のファイルは増えなかった。モデルは拒否の理由を受け取って、回答の冒頭で「保存は行われませんでした」と伝え、質問への回答は続けた。保存をもう一度依頼してくることもなかった。
+
+  | 確認への入力 | 保存 | requests | tool_calls | 回答での伝え方 |
+  |---|---|---:|---:|---|
+  | y（承認） | 1ファイル作成 | 3 | 3 | 「学習ログに保存しました」 |
+  | n（拒否） | なし | 3 | 2 | 「保存は行われませんでした」 |
+
+  拒否した呼び出しは実行されないので、`tool_calls` に数えられない（3→2）。一方で `requests` は同じ3回だった。拒否の理由をモデルに返し、モデルが回答を書き直すための呼び出しが必要になるからだ。
 - 保存を頼んでいない基礎の27回では、`save_learning_log` は一度も呼ばれなかった。
 
 **気づき・疑問**
 
 - 承認画面で本文を全部見せたのは意味があった。保存されたのは用語集の定義そのものではなく、モデルが言い換えた文（「（Quantization）」の付記など）だったからだ。何を残すかを人が確認できるのが、Human-in-the-loop の役割だと分かった。
 - 承認の前後で `run_sync` が2回に分かれる。`usage` を引き継がないと、`requests` が実際より少なく見える。
-- 疑問：拒否されたモデルが、同じ保存をもう一度依頼してきたらどうするか。今回はプログラム側で上限を5回にしたが、「拒否されたら同じ会話では再依頼しない」を INSTRUCTIONS に書くべきか、プログラム側で止めるべきか。
+- 疑問：今回の1回では、拒否されたモデルは保存を再依頼しなかった。ただ、拒否の理由の文（「保存しなかったことを利用者に伝えてください」）が効いたのか、モデルの元々の振る舞いなのかは分からない。再依頼に備えてプログラム側で上限を5回にしたが、「拒否されたら同じ会話では再依頼しない」を INSTRUCTIONS にも書くべきかは検討の余地がある。
 
 ### 基礎：INSTRUCTIONS / docstring を1か所ずつ変えて比べる
 
