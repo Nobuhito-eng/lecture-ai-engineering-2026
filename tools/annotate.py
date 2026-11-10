@@ -101,7 +101,8 @@ def page_label(cases_path: Path, labels_path: Path) -> None:
         with st.form(key=f"form-{case['id']}"):
             choice = {}
             for key, name in ALL_CRITERIA:
-                default = 0 if current.get(key, "pass") == "pass" else 1
+                # まだラベルを付けていない項目は未選択から始める（初期値の「合格」のまま保存してしまわないように）
+                default = {"pass": 0, "fail": 1}.get(current.get(key))
                 choice[key] = st.radio(
                     f"{name}", ["合格（T）", "不合格（F）"], index=default, horizontal=True,
                     help=CRITERION_HELP[key], key=f"{case['id']}-{key}",
@@ -109,7 +110,10 @@ def page_label(cases_path: Path, labels_path: Path) -> None:
             unsure = st.checkbox("迷った（基準だけでは決めにくい）", value=bool(current.get("unsure_flag", False)))
             note = st.text_input("メモ（任意）", value=current.get("note", ""))
             submitted = st.form_submit_button("保存して次へ", type="primary")
-        if submitted:
+        missing = [name for key, name in ALL_CRITERIA if choice[key] is None]
+        if submitted and missing:
+            st.error("まだ選んでいない基準があります：" + "、".join(missing) + "。5 つすべてで合格か不合格を選んでから保存してください")
+        elif submitted:
             labels[case["id"]] = {
                 "id": case["id"],
                 **{key: ("pass" if choice[key].startswith("合格") else "fail") for key, _ in ALL_CRITERIA},
