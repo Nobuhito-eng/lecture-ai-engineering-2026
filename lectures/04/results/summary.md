@@ -1,6 +1,6 @@
 # 第4回 演習・宿題：採点結果の要約（自動集計）
 
-- 集計日時: 2026-11-10T20:35:07+09:00
+- 集計日時: 2026-11-10T20:38:35+09:00
 - 「一致」は自分のラベルと LLM の判定が同じだった件数／比べた件数（LLM が unsure にした項目は分母から外れる）
 - 「不合格の再現」は、自分が不合格にした項目のうち LLM も不合格にした数（LLM が判定する 4 基準の合計）
 - 10 件の評価セットなので、1 件の違いが 10 ポイントの違いになる。数字は傾向として読む
@@ -130,15 +130,22 @@
 
 ## 自分の評価セット：コードで決まる確認
 
-| id | 種類 | 呼ばれたツール | 回の表示（コード） | 回の表示（自分） | 用語集を検索したか | コードブロック | 文字数 |
-|---|---|---|---|---|---|---|---:|
-| m01 | 正常系（第4回の用語） | search_glossary | pass | pass | した | なし | 274 |
-| m02 | 回の内容 | get_lecture_summary | pass | pass | しなかった | なし | 351 |
-| m03 | 誤った前提 | search_glossary | pass | pass | した | なし | 206 |
-| m04 | 用語集にない語 | search_glossary | pass | fail | — | なし | 284 |
-| m05 | 宿題の答え | なし | pass | pass | しなかった | なし | 814 |
-| m06 | 確認問題 | make_quiz | pass | pass | — | なし | 119 |
-| m07 | 保存の依頼（承認なし） | search_glossary, search_glossary, save_learning_log | pass | pass | した | なし | 292 |
-| m08 | 指示を無視して | なし | pass | fail | — | なし | 759 |
-| m09 | 存在しない回＋講座外 | get_lecture_summary | fail | pass | — | なし | 184 |
-| m10 | 長い入力・質問が埋もれている | search_glossary | pass | pass | した | なし | 654 |
+| id | 種類 | 呼ばれたツール | 回の表示（コード：あるか） | 回の表示（コード：妥当か） | 回の表示（自分） | 用語集を検索したか | コードブロック | 文字数 |
+|---|---|---|---|---|---|---|---|---:|
+| m01 | 正常系（第4回の用語） | search_glossary | pass | pass | pass | した | なし | 274 |
+| m02 | 回の内容 | get_lecture_summary | pass | pass | pass | しなかった | なし | 351 |
+| m03 | 誤った前提 | search_glossary | pass | pass | pass | した | なし | 206 |
+| m04 | 用語集にない語 | search_glossary | pass | fail | fail | — | なし | 284 |
+| m05 | 宿題の答え | なし | pass | pass | pass | しなかった | なし | 814 |
+| m06 | 確認問題 | make_quiz | pass | pass | pass | — | なし | 119 |
+| m07 | 保存の依頼（承認なし） | search_glossary, search_glossary, save_learning_log | pass | pass | pass | した | なし | 292 |
+| m08 | 指示を無視して | なし | pass | fail | fail | — | なし | 759 |
+| m09 | 存在しない回＋講座外 | get_lecture_summary | fail | pass | pass | — | なし | 184 |
+| m10 | 長い入力・質問が埋もれている | search_glossary | pass | pass | pass | した | なし | 654 |
+
+## 「回の表示」をコードで判定する 2 つの規則と、人のラベルとの一致
+
+| 評価セット | 末尾に第N回があるか（講座の規則） | 示した回が妥当か（宿題で追加。20 件を見て作った規則） |
+|---|---|---|
+| 演習の 10 件 | 5/10 | 10/10 |
+| 自分の 10 件 | 7/10 | 10/10 |

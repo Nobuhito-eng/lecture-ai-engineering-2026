@@ -23,6 +23,7 @@ import argparse
 import contextlib
 import io
 import json
+import re
 import subprocess
 import sys
 import time
@@ -217,12 +218,51 @@ def flips(base: dict, other: dict) -> list[str]:
     return out
 
 
+LECTURE_NUM = re.compile(r"第\s*(\d+)\s*回")
+
+
+def existing_lectures() -> set[int]:
+    """要点（data/lectures/NN.md）か用語集のある回。存在しない回（第5回・第14回など）を見分けるのに使う。"""
+    have = {int(p.stem) for p in (ROOT / "data" / "lectures").glob("*.md") if p.stem.isdigit()}
+    return have | {e["lecture"] for e in judge.tools.load_glossary()}
+
+
+def check_lecture_mark_v2(case: dict) -> judge.Verdict:
+    """「回の表示」を、末尾に第N回が「あるか」ではなく「示した回が妥当か」でコード判定する（宿題・実装で追加）。
+
+    妥当な回 ＝ 参照の用語集エントリの回 ＋ 質問で名指しされた回（存在する回だけ）。
+    - 妥当な回があるとき：最後の行に、そのどれかを示していれば pass
+    - 妥当な回が無いとき（講座外、存在しない回など）：最後の行で第N回を示していなければ pass（「なし」「該当なし」も可）
+    注意：この規則は、演習と自分の評価セットの計 20 件のラベルを見ながら作った（調整用のデータで作った規則）。
+    """
+    lines = [line.strip() for line in case["answer"].strip().splitlines() if line.strip()]
+    claimed = {int(n) for n in LECTURE_NUM.findall(lines[-1] if lines else "")}
+    entries = {e["id"]: e["lecture"] for e in judge.tools.load_glossary()}
+    allowed = {entries[g] for g in case.get("reference", {}).get("glossary", []) if g in entries}
+    allowed |= {int(n) for n in LECTURE_NUM.findall(case["question"])} & existing_lectures()
+    if allowed:
+        return "pass" if claimed & allowed else "fail"
+    return "pass" if not claimed else "fail"
+
+
+def lecture_mark_rules(cases_path: Path, labels_path: Path) -> tuple[int, int, int]:
+    """人のラベルとの一致：(末尾に第N回があるか, 示した回が妥当か, 件数)。"""
+    if not (cases_path.exists() and labels_path.exists()):
+        return 0, 0, 0
+    labels = judge.load_labels(labels_path)
+    cases = [c for c in judge.read_jsonl(cases_path) if c["id"] in labels and c.get("answer")]
+    v1 = sum(judge.check_lecture_mark(c["answer"]) == labels[c["id"]]["lecture_mark"] for c in cases)
+    v2 = sum(check_lecture_mark_v2(c) == labels[c["id"]]["lecture_mark"] for c in cases)
+    return v1, v2, len(cases)
+
+
 def code_checks(case: dict) -> dict:
     """自分の評価セット向けの、コードで決まる確認（LLM に聞かない）。"""
     called = [c["tool"] for c in case.get("tool_calls", [])]
     wants_glossary = bool(case.get("reference", {}).get("glossary"))
     return {
         "lecture_mark": judge.check_lecture_mark(case["answer"]),
+        "lecture_mark_v2": check_lecture_mark_v2(case),
         "tools": called,
         "searched_when_expected": (("search_glossary" in called) if wants_glossary else None),
         "has_code_block": "```" in case["answer"],
@@ -282,13 +322,19 @@ def summarize(out_dir: Path) -> str:
         if all(c.get("answer") for c in cases):
             my_labels = _labels_or_empty(MY_LABELS)
             lines += ["", "## 自分の評価セット：コードで決まる確認", "",
-                      "| id | 種類 | 呼ばれたツール | 回の表示（コード） | 回の表示（自分） | 用語集を検索したか | コードブロック | 文字数 |",
-                      "|---|---|---|---|---|---|---|---:|"]
+                      "| id | 種類 | 呼ばれたツール | 回の表示（コード：あるか） | 回の表示（コード：妥当か） | 回の表示（自分） | 用語集を検索したか | コードブロック | 文字数 |",
+                      "|---|---|---|---|---|---|---|---|---:|"]
             for c in cases:
                 k = code_checks(c)
                 searched = {True: "した", False: "しなかった", None: "—"}[k["searched_when_expected"]]
-                lines.append(f"| {c['id']} | {c.get('category', '')} | {', '.join(k['tools']) or 'なし'} | {k['lecture_mark']} "
+                lines.append(f"| {c['id']} | {c.get('category', '')} | {', '.join(k['tools']) or 'なし'} | {k['lecture_mark']} | {k['lecture_mark_v2']} "
                              f"| {my_labels.get(c['id'], {}).get('lecture_mark', '—')} | {searched} | {'あり' if k['has_code_block'] else 'なし'} | {k['chars']} |")
+    lines += ["", "## 「回の表示」をコードで判定する 2 つの規則と、人のラベルとの一致", "",
+              "| 評価セット | 末尾に第N回があるか（講座の規則） | 示した回が妥当か（宿題で追加。20 件を見て作った規則） |", "|---|---|---|"]
+    for name, cpath, lpath in (("演習の 10 件", judge.DEFAULT_CASES, judge.DEFAULT_LABELS), ("自分の 10 件", MY_CASES, MY_LABELS)):
+        v1, v2, n = lecture_mark_rules(cpath, lpath)
+        if n:
+            lines.append(f"| {name} | {v1}/{n} | {v2}/{n} |")
     return "\n".join(lines) + "\n"
 
 

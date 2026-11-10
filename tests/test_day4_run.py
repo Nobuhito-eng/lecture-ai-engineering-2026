@@ -97,3 +97,15 @@ def test_main_runs_all_conditions_with_fake_model_and_resumes(tmp_path, monkeypa
     assert (out / "baseline.json").stat().st_mtime_ns == stamp
     summary = (out / "summary.md").read_text(encoding="utf-8")
     assert "| my_cases" in summary and "自分の評価セット：コードで決まる確認" in summary and "講師のラベル" in summary
+
+
+def test_lecture_mark_v2_checks_whether_the_shown_lecture_is_appropriate():
+    case = lambda q, a, refs=(): {"question": q, "answer": a, "reference": {"glossary": list(refs)}}
+    assert d4.check_lecture_mark_v2(case("LoRAとは？", "説明\n\n関係する回：第2回", ["lora"])) == "pass"
+    assert d4.check_lecture_mark_v2(case("LoRAとは？", "説明\n\n関係する回：第3回", ["lora"])) == "fail"  # 参照の回と違う
+    assert d4.check_lecture_mark_v2(case("LoRAとは？", "説明だけ", ["lora"])) == "fail"  # 示していない
+    assert d4.check_lecture_mark_v2(case("天気は？", "範囲外です。\n\n関係する回：なし")) == "pass"  # 関係する回が無い
+    assert d4.check_lecture_mark_v2(case("天気は？", "範囲外です。\n\n関係する回：第1回")) == "fail"  # 根拠のない回
+    assert d4.check_lecture_mark_v2(case("第4回の宿題は？", "ヒント\n\n第4回")) == "pass"  # 質問で名指しされた回
+    assert d4.check_lecture_mark_v2(case("第14回の要点は？", "ありません\n\n関係する回：第14回")) == "fail"  # 存在しない回
+    assert d4.check_lecture_mark_v2(case("第14回の要点は？", "ありません\n\n（関連する回：該当なし）")) == "pass"
