@@ -28,6 +28,8 @@ DEFAULT_CASES = ROOT / "data" / "eval" / "lec04_cases.jsonl"
 DEFAULT_LABELS = ROOT / "lectures" / "04" / "labels.jsonl"
 INSTRUCTOR_LABELS = ROOT / "lectures" / "04" / "reference" / "labels_instructor.jsonl"
 MY_CASES = ROOT / "data" / "eval" / "my_cases.jsonl"
+MY_LABELS = ROOT / "lectures" / "04" / "my_labels.jsonl"
+PRESETS = {"演習の 10 件": (DEFAULT_CASES, DEFAULT_LABELS), "自分の 10 件（宿題・実装）": (MY_CASES, MY_LABELS)}
 
 CRITERION_HELP = {
     "grounding": "用語集にある事柄はエントリと矛盾しない。ない事柄は断定せず「用語集にはない」と伝えている",
@@ -57,9 +59,11 @@ def page_label(cases_path: Path, labels_path: Path) -> None:
         return
     labels = load_labels(labels_path) if labels_path.exists() else {}
 
-    if "index" not in st.session_state:
+    # 表示位置は評価セットごとに持つ（サイドバーで評価セットを切り替えたら、そのセットの続きから始める）
+    if st.session_state.get("index_for") != str(cases_path):
         done = [i for i, c in enumerate(cases) if c["id"] in labels]
         st.session_state.index = min(len(done), len(cases) - 1) if done else 0
+        st.session_state.index_for = str(cases_path)
 
     i = st.session_state.index
     case = cases[i]
@@ -175,7 +179,7 @@ def page_author(cases_path: Path) -> None:
             st.error("質問と期待するふるまいは必須です")
         else:
             existing.append({
-                "id": f"{len(existing) + 1:02d}", "category": category.strip(),
+                "id": f"m{len(existing) + 1:02d}", "category": category.strip(),
                 "question": question.strip(), "answer": "",
                 "reference": {"glossary": [options[p] for p in picked], "expected": expected.strip()},
             })
@@ -192,8 +196,11 @@ def main() -> None:
     with st.sidebar:
         mode = st.radio("画面", ["ラベル付け", "比べる（講師のラベルと）", "作問（宿題・実装）"])
         st.divider()
-        cases_path = Path(st.text_input("評価セット", value=rel(DEFAULT_CASES)))
-        labels_path = Path(st.text_input("ラベルの保存先", value=rel(DEFAULT_LABELS)))
+        # 宿題（実装）: 自分の評価セットに切り替えるとき、2 つのパスを手で打ち直さなくてよいようにする
+        preset = st.radio("ラベルを付ける評価セット", list(PRESETS), help="選ぶと、下の 2 つのパスが切り替わります")
+        preset_cases, preset_labels = PRESETS[preset]
+        cases_path = Path(st.text_input("評価セット", value=rel(preset_cases), key=f"cases-{preset}"))
+        labels_path = Path(st.text_input("ラベルの保存先", value=rel(preset_labels), key=f"labels-{preset}"))
         my_cases_path = Path(st.text_input("作問の保存先", value=rel(MY_CASES)))
     cases_path = cases_path if cases_path.is_absolute() else ROOT / cases_path
     labels_path = labels_path if labels_path.is_absolute() else ROOT / labels_path

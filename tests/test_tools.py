@@ -59,6 +59,6 @@ def test_make_quiz_uses_terms_of_the_lecture():
 
 
 def test_make_quiz_reports_unknown_lecture():
-    for lecture in (0, 4, 99):
+    for lecture in (0, 99):  # 用語が無い回
         message = tools.make_quiz(lecture)
         assert "ありません" in message and "第2回" in message

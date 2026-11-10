@@ -305,11 +305,31 @@ def generate_answers(cases: list[dict], wait: float = 1.0) -> list[dict]:
     """評価セットの各質問を自分のエージェント（app.agent）に投げ、回答を埋める。"""
     from app.agent import agent, build_model
 
-    model = build_model()
+    return generate_with(agent, build_model(), cases, wait=wait)
+
+
+def generate_with(agent: Agent, model, cases: list[dict], wait: float = 0.0) -> list[dict]:
+    """回答を生成して cases に書き込む。あわせて、ツールの呼び出し（名前と引数）を tool_calls に記録する。
+
+    第3回の宿題（実装）で save_learning_log を承認付きにしたので、保存を頼む質問では実行が承認待ちで止まる。
+    評価セットの生成中は利用者がいないので、承認はすべて「拒否」にして続きを実行する（ファイルは作らない）。
+    tool_calls は、ツールの使い方をコードで判定するために残す（例：答える前に用語集を検索したか）。
+    """
+    import contextlib
+    import io
+
+    from app.agent import run_with_approval
+
     print(f"回答を生成中 {len(cases)} 件 ", end="", flush=True)
     for case in cases:
-        result = agent.run_sync(case["question"], model=model)
+        with contextlib.redirect_stdout(io.StringIO()):  # 承認の表示（[approval] …）は進み具合の表示に混ぜない
+            result = run_with_approval(agent, case["question"], model, approve=lambda call: False)
         case["answer"] = str(result.output)
+        case["tool_calls"] = [
+            {"tool": p.tool_name, "args": p.args_as_dict()}
+            for m in result.all_messages() for p in m.parts if isinstance(p, ToolCallPart)
+        ]
+        case["requests"] = result.usage.requests
         print(".", end="", flush=True)
         time.sleep(wait)
     print()
