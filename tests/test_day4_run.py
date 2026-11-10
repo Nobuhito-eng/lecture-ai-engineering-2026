@@ -33,7 +33,7 @@ def test_rubric_variants_differ_in_one_place():
     assert extra == 0 and len(lines) == 1 and "簡潔" in lines[0][1]  # 宿題（基礎）: 1 行だけ違う
     rubric = judge.DEFAULT_RUBRIC.read_text(encoding="utf-8")
     assert rubric.count(d4.REASON_FIRST_LINE) == 1
-    assert "一般的に説明するのは、断定ではない（pass）" in rubric  # 演習 STEP 3 で書き足した方針
+    assert "推測で断定したことにあたる（fail）" in rubric  # 演習 STEP 3 で書き足した方針（自分のラベルに合わせて fail）
     assert "一般的な説明をすることが" in d4.RUBRIC_V0.read_text(encoding="utf-8")  # 配布時は「まだ決めていない」
 
 
