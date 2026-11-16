@@ -17,7 +17,7 @@ import sqlite_vec
 from app.config import (
     EMBEDDING_DIMENSIONS, EMBEDDING_MAX_TOKENS, EMBEDDING_MODEL,
     RAG_DB, RAG_DOCUMENT_IDS, RAG_SOURCE, RAG_TOP_K, RAG_TREE, get_api_key,
-    RAG_GRAPH, GRAPH_START_K, GRAPH_HOPS, GRAPH_MAX_RESULTS,
+    RAG_GRAPH, GRAPH_START_K, GRAPH_HOPS, GRAPH_MAX_RESULTS, RAG_INCLUDE_NEIGHBORS,
 )
 
 
@@ -124,6 +124,20 @@ def open_index(path: Path):
         db.close()
 
 
+def add_neighbor_pages(hits: list[dict], pages: list[dict]) -> list[dict]:
+    """検索上位を優先し、同じ資料の前後1ページを重複なく追加する。"""
+    by_position = {(p["document_id"], p["page"]): p for p in pages}
+    results = list(hits)
+    seen = {hit["page_id"] for hit in hits}
+    for hit in hits:
+        for offset in (-1, 1):
+            page = by_position.get((hit["document_id"], hit["page"] + offset))
+            if page is not None and page["page_id"] not in seen:
+                results.append({**page, "neighbor_of": hit["page_id"], "page_offset": offset})
+                seen.add(page["page_id"])
+    return results
+
+
 def search(query: str) -> list[dict]:
     """質問を埋め込み、近いページを最大RAG_TOP_K件返す。"""
     if not isinstance(query, str) or not query.strip():
@@ -135,7 +149,8 @@ def search(query: str) -> list[dict]:
                    vec_distance_cosine(embedding, ?) AS distance
             FROM chunks ORDER BY distance, page_id LIMIT ?
         """, (sqlite_vec.serialize_float32(vector), RAG_TOP_K))
-        return [dict(row) for row in rows]
+        hits = [dict(row) for row in rows]
+    return add_neighbor_pages(hits, load_pages()) if RAG_INCLUDE_NEIGHBORS else hits
 
 
 def search_graph(query: str) -> dict:

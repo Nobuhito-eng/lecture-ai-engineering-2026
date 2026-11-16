@@ -1,0 +1,206 @@
+[
+  {
+    "question_id": 1,
+    "question": "第2回の説明では、LoRAは何を固定し何を学習しますか？QLoRAは何を加えますか？",
+    "condition": "baseline",
+    "top_k": 5,
+    "neighbors": false,
+    "attempts": [
+      {
+        "returncode": 1,
+        "stdout": "[model] gemini-3.5-flash-lite\nモデルが混み合っています（503）。少し待ってから再実行してください。\n",
+        "stderr": "",
+        "wall_seconds": 5.951
+      },
+      {
+        "returncode": 0,
+        "stdout": "[model] gemini-3.5-flash-lite\n第2回講義資料によると、LoRAおよびQLoRAの仕組みについて以下のように説明されています。\n\n* **LoRA（Low-Rank Adaptation）**\n  * **何を固定するか：** 元の重み（本体）は固定し、学習しません（第2回・PDF p.51, p.52）。\n  * **何を学習するか：** 細長い2つの小さな行列の積（低ランク）で表される変化分（追加部分のパラメータ）だけを学習します（第2回・PDF p.51, p.52）。\n\n* **QLoRA**\n  * **何を加えるか：** LoRAの手法に加え、元の重みを4bit（数値を粗く保存）に圧縮するという処理を加えます（第2回・PDF p.51, p.52）。\n\n--- trace ---\n[tool call]   search_materials({'query': 'LoRA 固定 学習 QLoRA 追加'})\n[tool return] search_materials -> {\"results\": [{\"page_id\": \"lec02-main-p052\", \"document_id\": \"lec02-main\", \"lecture\": 2, \"document_title\": \"基盤モデルの仕組み\", \"s…\n[time] 回答完了まで 3.20 秒（検索・埋め込みを含む）\n[usage] 入力 3,031 tokens / 出力 204 tokens / モデル応答 2 回\n[cost] 生成APIの推定コスト: $0.001419 USD（埋め込み・索引構築分は含まない）\n",
+        "stderr": "",
+        "wall_seconds": 5.682
+      }
+    ]
+  },
+  {
+    "question_id": 1,
+    "question": "第2回の説明では、LoRAは何を固定し何を学習しますか？QLoRAは何を加えますか？",
+    "condition": "basic",
+    "top_k": 3,
+    "neighbors": false,
+    "attempts": [
+      {
+        "returncode": 0,
+        "stdout": "[model] gemini-3.5-flash-lite\n第2回の資料によると、LoRAおよびQLoRAに関して以下の通り説明されています。\n\n* **LoRAは何を固定し何を学習するか：**\n  * 元の重みは固定し（学習しない）、細長い2つの小さな行列の積（低ランク）で表される変化分（小さな行列 A・B）だけを学習します（第2回・PDF p.51, 52）。\n* **QLoRAは何を加えるか：**\n  * LoRAの手法に加え、元の重みを4bitに圧縮して省メモリ化します（第2回・PDF p.51, 52）。\n\n--- trace ---\n[tool call]   search_materials({'query': 'LoRA 固定 学習 QLoRA 追加'})\n[tool return] search_materials -> {\"results\": [{\"page_id\": \"lec02-main-p052\", \"document_id\": \"lec02-main\", \"lecture\": 2, \"document_title\": \"基盤モデルの仕組み\", \"s…\n[time] 回答完了まで 3.53 秒（検索・埋め込みを含む）\n[usage] 入力 2,081 tokens / 出力 160 tokens / モデル応答 2 回\n[cost] 生成APIの推定コスト: $0.001024 USD（埋め込み・索引構築分は含まない）\n",
+        "stderr": "",
+        "wall_seconds": 6.043
+      }
+    ]
+  },
+  {
+    "question_id": 1,
+    "question": "第2回の説明では、LoRAは何を固定し何を学習しますか？QLoRAは何を加えますか？",
+    "condition": "neighbors",
+    "top_k": 5,
+    "neighbors": true,
+    "attempts": [
+      {
+        "returncode": 0,
+        "stdout": "[model] gemini-3.5-flash-lite\n講義資料によると、LoRAおよびQLoRAの仕組みについて以下のように説明されています。\n\n* **LoRAが固定するものと学習するもの**\n  * **固定するもの**：元の重み（本体）は固定して学習しない（第2回・PDF p.52）。\n  * **学習するもの**：細長い2つの小さな行列（行列A・B）の積で表される低ランクの「差分」（変化分）だけを学習する（第2回・PDF p.51, p.52）。\n\n* **QLoRAが加えるもの**\n  * 元の重みを **4bit（数値を粗く保存）に圧縮** するという要素を加える（第2回・PDF p.52）。これにより、さらに少ないメモリで調整が可能になる（第2回・PDF p.51）。\n\n--- trace ---\n[tool call]   search_materials({'query': 'LoRA 固定 学習 QLoRA 追加'})\n[tool return] search_materials -> {\"results\": [{\"page_id\": \"lec02-main-p052\", \"document_id\": \"lec02-main\", \"lecture\": 2, \"document_title\": \"基盤モデルの仕組み\", \"s…\n[time] 回答完了まで 17.31 秒（検索・埋め込みを含む）\n[usage] 入力 5,391 tokens / 出力 206 tokens / モデル応答 2 回\n[cost] 生成APIの推定コスト: $0.002132 USD（埋め込み・索引構築分は含まない）\n",
+        "stderr": "",
+        "wall_seconds": 19.727
+      }
+    ]
+  },
+  {
+    "question_id": 2,
+    "question": "第3回の例では、コンパクションとセッションをまたぐメモリはどう違いますか。日々のメモはすべて長期メモリに入りますか",
+    "condition": "baseline",
+    "top_k": 5,
+    "neighbors": false,
+    "attempts": [
+      {
+        "returncode": 0,
+        "stdout": "[model] gemini-3.5-flash-lite\n第3回の講義資料によると、コンパクションとセッションをまたぐメモリ（セッションをまたぐ記録）には、以下のような違いがあります。\n\n* **コンパクション（ループの中の履歴の圧縮）**\n  * **場所・範囲：** コンテキストの中（同じセッション内）で機能します（第3回・PDF p.39）。\n  * **仕組み：** 古い履歴を要約に置き換えることで、コンテキストの容量を詰め込んで管理します（第3回・PDF p.39, p.65）。\n* **セッションをまたぐメモリ（外の保存先）**\n  * **場所・範囲：** セッションをまたいで効くものであり、コンテキストの外にある保存先（ファイルやメモリツールなど）に書き出され、必要に応じてエージェントが読み戻します（第3回・PDF p.39）。\n\nまた、日々のメモがすべて長期メモリに入るかについては、OpenClawの例などで説明されています。\n* 日々のメモ（例：`memory/日付.md`）のすべてがそのまま長期メモリ（`MEMORY.md`）に入るわけではありません（第3回・PDF p.40）。\n* 毎晩の見直し（dreaming）などのプロセスを通じて、「何度も出てくるテーマを探す」「基準を超えたものだけ残す」といった選別が行われます（第3回・PDF p.40）。\n* そのため、一度きりの調べものは日々のメモに残るだけで、長期メモリが膨らまないような仕組みになっています（第3回・PDF p.40）。\n\n--- trace ---\n[tool call]   search_materials({'query': 'コンパクション セッション メモリ 長期メモリ'})\n[tool return] search_materials -> {\"results\": [{\"page_id\": \"lec03-main-p065\", \"document_id\": \"lec03-main\", \"lecture\": 3, \"document_title\": \"AIエージェント\", \"se…\n[time] 回答完了まで 4.17 秒（検索・埋め込みを含む）\n[usage] 入力 2,495 tokens / 出力 372 tokens / モデル応答 2 回\n[cost] 生成APIの推定コスト: $0.001678 USD（埋め込み・索引構築分は含まない）\n",
+        "stderr": "",
+        "wall_seconds": 6.568
+      }
+    ]
+  },
+  {
+    "question_id": 2,
+    "question": "第3回の例では、コンパクションとセッションをまたぐメモリはどう違いますか。日々のメモはすべて長期メモリに入りますか",
+    "condition": "basic",
+    "top_k": 3,
+    "neighbors": false,
+    "attempts": [
+      {
+        "returncode": 0,
+        "stdout": "[model] gemini-3.5-flash-lite\n第3回の講義資料に基づき、コンパクションとセッションをまたぐメモリの違い、および日々のメモの扱いについて解説します。\n\n### 1. コンパクションとセッションをまたぐメモリの違い\n* **コンパクション（同じセッション内）**\n  * **場所・仕組み：** コンテキストの中（同じセッション内）で行われます。古い履歴を要約に置き換えることで、コンテキストの上限による途中経過の欠落を防ぎます（第3回・PDF p.39）。\n  * **役割：** ループの中の履歴を圧縮し、1つのセッションの会話を継続できるようにします（第3回・PDF p.65）。\n* **セッションをまたぐメモリ（外の保存先）**\n  * **場所・仕組み：** セッションの外の保存先（ファイルやメモリツールなど）に保存され、次回のセッションのコンテキストに読み込まれます（第3回・PDF p.39）。\n  * **役割：** セッションが終了してやり取りがリセットされた後も、前回の原因や決めたことを次のセッションに引き継ぎます（第3回・PDF p.38, 39）。\n\n---\n\n### 2. 日々のメモはすべて長期メモリに入りますか？\n* 第3回のOpenClawの実装例では、日々のメモ（`memory/日付.md`）のすべてがそのまま長期メモリ（`MEMORY.md`）に入るわけではありません（第3回・PDF p.40）。\n* 毎晩の自動見直し（dreaming）の過程で、以下のようなステップを経て取捨選択されます（第3回・PDF p.40）：\n  1. **集める：** 重複を除いて候補を並べる\n  2. **見比べる：** 何度も出てくるテーマを探す\n  3. **移す：** 基準を超えたものだけを残す\n* そのため、一度きりの調べものなどは日々のメモに残るだけであり、すべてが長期メモリに入るわけではありません（第3回・PDF p.40）。\n\n--- trace ---\n[tool call]   search_materials({'query': 'コンパクション セッション メモリ 長期メモリ 日々のメモ'})\n[tool return] search_materials -> {\"results\": [{\"page_id\": \"lec03-main-p039\", \"document_id\": \"lec03-main\", \"lecture\": 3, \"document_title\": \"AIエージェント\", \"se…\n[tool call]   search_materials({'query': '日々のメモ 長期メモリ Claude Code'})\n[tool return] search_materials -> {\"results\": [{\"page_id\": \"lec03-main-p039\", \"document_id\": \"lec03-main\", \"lecture\": 3, \"document_title\": \"AIエージェント\", \"se…\n[time] 回答完了まで 6.30 秒（検索・埋め込みを含む）\n[usage] 入力 4,649 tokens / 出力 514 tokens / モデル応答 3 回\n[cost] 生成APIの推定コスト: $0.002680 USD（埋め込み・索引構築分は含まない）\n",
+        "stderr": "",
+        "wall_seconds": 8.754
+      }
+    ]
+  },
+  {
+    "question_id": 2,
+    "question": "第3回の例では、コンパクションとセッションをまたぐメモリはどう違いますか。日々のメモはすべて長期メモリに入りますか",
+    "condition": "neighbors",
+    "top_k": 5,
+    "neighbors": true,
+    "attempts": [
+      {
+        "returncode": 1,
+        "stdout": "[model] gemini-3.5-flash-lite\nモデルが混み合っています（503）。少し待ってから再実行してください。\n",
+        "stderr": "",
+        "wall_seconds": 6.677
+      },
+      {
+        "returncode": 0,
+        "stdout": "[model] gemini-3.5-flash-lite\n第3回講義資料に沿って、コンパクションとセッションをまたぐメモリの違い、および日々のメモの扱いについて整理します。\n\n### 1. コンパクションとセッションをまたぐメモリの違い\n* **コンパクション**\n  * **場所・範囲**: 「コンテキストの中（同じセッション）」で行われます（第3回・PDF p.39）。\n  * **処理内容**: 長くなった古い履歴を要約し、要約に置き換えることでコンテキストの圧迫を防ぎます（第3回・PDF p.39、p.65）。セッションが終わると会話履歴やコンパクションされた内容も消えます。\n* **セッションをまたぐメモリ**\n  * **場所・範囲**: 「外の保存先（セッションをまたぐ）」に保存されます（第3回・PDF p.39）。\n  * **処理内容**: メモリツールやファイルなどを通じて、エージェントが必要に応じて書き出し、次回のセッション（新しいコンテキスト）に読み戻して引き継ぎます（第3回・PDF p.39）。\n\n---\n\n### 2. 日々のメモはすべて長期メモリに入りますか？\n* OpenClawの実装例などの解説では、毎晩自動で見直し（dreaming）を行い、重複を除いて何度も出てくるテーマなどの**基準を超えたものだけ**を長期メモリ（MEMORY.md）に移す仕組みになっています（第3回・PDF p.40）。\n* そのため、一度きりの調べものなどは日々のメモに残るだけであり、すべてがそのまま長期メモリに入るわけではありません（第3回・PDF p.40）。すべてを蓄積すると古い情報や誤りまで戻ってしまうため、何を残し何を消すかの設計が行われます（第3回・PDF p.38）。\n\n--- trace ---\n[tool call]   search_materials({'query': 'コンパクション セッション メモリ 長期メモリ 日々のメモ'})\n[tool return] search_materials -> {\"results\": [{\"page_id\": \"lec03-main-p039\", \"document_id\": \"lec03-main\", \"lecture\": 3, \"document_title\": \"AIエージェント\", \"se…\n[time] 回答完了まで 3.57 秒（検索・埋め込みを含む）\n[usage] 入力 4,590 tokens / 出力 425 tokens / モデル応答 2 回\n[cost] 生成APIの推定コスト: $0.002440 USD（埋め込み・索引構築分は含まない）\n",
+        "stderr": "",
+        "wall_seconds": 5.934
+      }
+    ]
+  },
+  {
+    "question_id": 3,
+    "question": "今回作ったRAGの実測平均応答時間と正答率を教えてください",
+    "condition": "baseline",
+    "top_k": 5,
+    "neighbors": false,
+    "attempts": [
+      {
+        "returncode": 1,
+        "stdout": "[model] gemini-3.5-flash-lite\nモデルが混み合っています（503）。少し待ってから再実行してください。\n",
+        "stderr": "",
+        "wall_seconds": 5.338
+      },
+      {
+        "returncode": 0,
+        "stdout": "[model] gemini-3.5-flash-lite\n講義資料を確認したところ、今回作成したRAGの具体的な「実測平均応答時間」や「正答率」の数値についての記載はありません。\n\n資料では、LLMの出力は確率で決定されるため、1回試しただけでは評価にならず、同じ質問を複数回行って平均やばらつきを見る必要があると説明されています（第2回・PDF p.13）。ご自身の環境や実装における実測値をご確認ください。\n\n--- trace ---\n[tool call]   search_materials({'query': '実測平均応答時間 正答率 RAG'})\n[tool return] search_materials -> {\"results\": [{\"page_id\": \"lec02-main-p013\", \"document_id\": \"lec02-main\", \"lecture\": 2, \"document_title\": \"基盤モデルの仕組み\", \"s…\n[time] 回答完了まで 3.17 秒（検索・埋め込みを含む）\n[usage] 入力 3,205 tokens / 出力 122 tokens / モデル応答 2 回\n[cost] 生成APIの推定コスト: $0.001266 USD（埋め込み・索引構築分は含まない）\n",
+        "stderr": "",
+        "wall_seconds": 5.579
+      }
+    ]
+  },
+  {
+    "question_id": 3,
+    "question": "今回作ったRAGの実測平均応答時間と正答率を教えてください",
+    "condition": "basic",
+    "top_k": 3,
+    "neighbors": false,
+    "attempts": [
+      {
+        "returncode": 1,
+        "stdout": "[model] gemini-3.5-flash-lite\nモデルが混み合っています（503）。少し待ってから再実行してください。\n",
+        "stderr": "",
+        "wall_seconds": 20.186
+      },
+      {
+        "returncode": 0,
+        "stdout": "[model] gemini-3.5-flash-lite\n第1〜3回の講義資料を確認しましたが、今回作成したRAGシステムについての「実測平均応答時間」や「正答率」の数値データは記載されていません。\n\n講義資料では、RAGの仕組み（第1回・PDF p.49）や、LLM出力のばらつき（第2回・PDF p.13）について触れられています。ご自身で実装・計測された環境でのデータをご確認ください。\n\n--- trace ---\n[tool call]   search_materials({'query': '実測平均応答時間 正答率'})\n[tool return] search_materials -> {\"results\": [{\"page_id\": \"lec03-main-p064\", \"document_id\": \"lec03-main\", \"lecture\": 3, \"document_title\": \"AIエージェント\", \"se…\n[tool call]   search_materials({'query': 'RAG'})\n[tool return] search_materials -> {\"results\": [{\"page_id\": \"lec01-main-p049\", \"document_id\": \"lec01-main\", \"lecture\": 1, \"document_title\": \"AIエンジニアリング概論とA…\n[time] 回答完了まで 5.27 秒（検索・埋め込みを含む）\n[usage] 入力 5,150 tokens / 出力 138 tokens / モデル応答 3 回\n[cost] 生成APIの推定コスト: $0.001890 USD（埋め込み・索引構築分は含まない）\n",
+        "stderr": "",
+        "wall_seconds": 7.653
+      }
+    ]
+  },
+  {
+    "question_id": 3,
+    "question": "今回作ったRAGの実測平均応答時間と正答率を教えてください",
+    "condition": "neighbors",
+    "top_k": 5,
+    "neighbors": true,
+    "attempts": [
+      {
+        "returncode": 0,
+        "stdout": "[model] gemini-3.5-flash-lite\nご質問の「今回作ったRAGの実測平均応答時間と正答率」についてですが、第1〜3回の講義資料内には、あなたが実際に作成されたRAGシステムの具体的な計測結果（実測の平均応答時間や正答率の数値）についての記載はありませんでした。\n\n講義資料内では、LLMやRAGの評価方法に関して以下のように触れられています。\n\n* **評価は同じ質問を複数回行うこと**\n  * LLMは確率で次の言葉を選ぶため、同じ質問でも答えは毎回変わります。1回試して「動いた」ではなく、同じ質問を複数回聞いて平均とばらつきを見る必要があります（第2回・PDF p.13）。\n* **答えられない質問も含めて測る**\n  * 知らない質問にもそれらしく答えてしまうハルシネーションを防ぐため、答えられない質問を評価セットに入れて「分かりません」と言えるかを測ることが重要です（第2回・PDF p.14）。\n\nもし講義内の演習や課題で実際に計測された数値を確認したい場合は、お手数ですがお手元の演習ノートブックや実験結果のログ、または該当する第4回以降の資料等をご確認ください。\n\n--- trace ---\n[tool call]   search_materials({'query': '実測 平均応答時間 正答率 RAG'})\n[tool return] search_materials -> {\"results\": [{\"page_id\": \"lec02-main-p013\", \"document_id\": \"lec02-main\", \"lecture\": 2, \"document_title\": \"基盤モデルの仕組み\", \"s…\n[time] 回答完了まで 9.06 秒（検索・埋め込みを含む）\n[usage] 入力 7,174 tokens / 出力 284 tokens / モデル応答 2 回\n[cost] 生成APIの推定コスト: $0.002862 USD（埋め込み・索引構築分は含まない）\n",
+        "stderr": "",
+        "wall_seconds": 11.465
+      }
+    ]
+  },
+  {
+    "question_id": 1,
+    "question": "第2回の説明では、LoRAは何を固定し何を学習しますか？QLoRAは何を加えますか？",
+    "condition": "full",
+    "top_k": 5,
+    "neighbors": false,
+    "attempts": [
+      {
+        "returncode": 0,
+        "stdout": "[model] gemini-3.5-flash-lite\n[full-context] 入力227,970文字\nご質問ありがとうございます。\n\nLoRAとQLoRAの学習対象および仕組みについては、以下の資料に記載されています。\n\n- **資料:** `lec02-main / 基盤モデルの仕組み`（PDF p.51, p.52）\n- **資料:** `lec02-exercise / LoRAで回答形式を学習し、学習前後を比較する`（PDF p.21）\n\n宿題の答えではなく考え方のヒントとして、資料を読む際の着眼点をお伝えします。\n\n1. **LoRAの仕組みのヒント**\n   - モデル全体を更新するのではなく、事前学習済みの元の重み（本体）は固定したままにします。\n   - 変化分（差分）を表すために、どのような追加部分を導入して学習しているかを確認してみましょう（低ランクの小さな行列など）。\n\n2. **QLoRAの仕組みのヒント**\n   - LoRAの仕組みに加えて、固定する元の重みに対してどのようなデータ形式の圧縮（量子化）を行っているかを確認してみましょう。\n\n該当箇所のスパート図や比較表をよく確認して整理してみてください。\n\n--- trace ---\n[time] 回答完了まで 4.18 秒（検索・埋め込みを含む）\n[usage] 入力 117,025 tokens / 出力 244 tokens / モデル応答 1 回\n[cost] 生成APIの推定コスト: $0.035718 USD（埋め込み・索引構築分は含まない）\n",
+        "stderr": "",
+        "wall_seconds": 6.752
+      }
+    ]
+  },
+  {
+    "question_id": 1,
+    "question": "第2回の説明では、LoRAは何を固定し何を学習しますか？QLoRAは何を加えますか？",
+    "condition": "tree",
+    "top_k": 5,
+    "neighbors": false,
+    "attempts": [
+      {
+        "returncode": 0,
+        "stdout": "[model] gemini-3.5-flash-lite\n第2回の講義資料によると、LoRAとQLoRAの仕組みは以下のようになっています。\n\n- **LoRA（Low-Rank Adaptation）**\n  - **何を固定するか：** 元のモデルの重み（本体）は**固定（Freeze）**して学習しません（第2回・PDF p.51, 52）。\n  - **何を学習するか：** 元の重みそのものを変える代わりに、重みの変化分（差分）を表す細長い2つの小さな行列（低ランク行列）だけを新しく用意し、**その追加部分だけを学習**します（第2回・PDF p.51, 52）。\n\n- **QLoRA（Quantized LoRA）**\n  - **何を加えるか：** LoRAの仕組み（小さな追加部分の学習）に加え、**元のモデルの重みを4bitに量子化（圧縮）**してメモリをさらに節約する仕組みを加えます（第2回・PDF p.51, 52）。これにより、大きなモデルでも少ないGPUメモリで効率的に微調整（Fine-Tuning）できるようになります。\n\n--- trace ---\n[tool call]   browse_tree({})\n[目次を開く] AIエンジニアリング実践講座2026 資料\n  直下の候補（ページは先頭文のみ）:\n    - lec01-main · AIエンジニアリング概論とAIコーディング\n    - lec02-main · 基盤モデルの仕組み\n    - lec03-main · AIエージェント\n[tool call]   browse_tree({'node_id': 'lec02-main'})\n[目次を開く] AIエンジニアリング実践講座2026 資料 → 基盤モデルの仕組み\n  直下の候補（ページは先頭文のみ）:\n    - lec02-main-p001 · PDF p.1 · 基盤モデルの仕組み\n      AI エンジニアリング講座 第 2 回\n    - lec02-main-p002 · PDF p.2 · 今日は「 [3] モデル学習」の中身、基盤モデルそのものを扱う\n      前回の振り返り\n    - lec02-main-p003 · PDF p.3 · チャットボットを作ると、すぐにこんな「厄介さ」に出会う\n      今日の問い\n    - lec02-main-p004 · PDF p.4 · 今日の 4 つの問い（各 15 分）\n      今日の構成\n    - lec02-main-p005 · PDF p.5 · 今日扱うのは「モデル」そのもの\n      今日の構成\n    - lec02-main-p006 · PDF p.6 · 今日の用語：先に 6 つだけ押さえる\n      今日の構成\n    - lec02-main-s007 · LLM は、確率で次の言葉を選ぶ\n    - lec02-main-s019 · 渡す・選ぶ／直す／考えさせる\n    - lec02-main-s030 · 基盤モデルの地図と選び方\n    - lec02-main-s045 · 選んだモデルを、いつ・どう直すか\n    - lec02-main-s063 · 補足：最新動向と詳しい説明\n[tool call]   browse_tree({'node_id': 'lec02-main-s045'})\n[目次を開く] AIエンジニアリング実践講座2026 資料 → 基盤モデルの仕組み → 選んだモデルを、いつ・どう直すか\n  直下の候補（ページは先頭文のみ）:\n    - lec02-main-p045 · PDF p.45 · 選んだモデルを、いつ・どう直すか\n      第 2 回　 4/4 （約 15 分）\n    - lec02-main-p046 · PDF p.46 · 小規模な FT は振る舞いに強く、知識の追加は苦手\n      4/4 　選んだモデルを、いつ・どう直すか\n    - lec02-main-p047 · PDF p.47 · 根拠と諸説：知識の追加は RAG が効きやすい\n      4/4 　選んだモデルを、いつ・どう直すか\n    - lec02-main-p048 · PDF p.48 · 継続事前学習（ CPT ）：知識・言語を足す追加学習\n      4/4 　選んだモデルを、いつ・どう直すか\n    - lec02-main-p049 · PDF p.49 · FT は「コストを下げる」ためにも使う\n      4/4 　選んだモデルを、いつ・どう直すか\n    - lec02-main-p050 · PDF p.50 · 判断の順番：測る → 分ける → プロンプト → Fine-Tuning\n      4/4 　選んだモデルを、いつ・どう直すか\n    - lec02-main-p051 · PDF p.51 · PEFT ：モデル全体ではなく、一部だけを学習する\n      4/4 　選んだモデルを、いつ・どう直すか\n    - lec02-main-p052 · PDF p.52 · LoRA と QLoRA ：大きなモデルも GPU 1 台で調整できる\n      4/4 　選んだモデルを、いつ・どう直すか\n    - lec02-main-p053 · PDF p.53 · チャットボットの場合：何を FT し、何を FT しないか\n      4/4 　選んだモデルを、いつ・どう直すか\n    - lec02-main-p054 · PDF p.54 · 手本データの作り方：質問と、理想の回答の組を用意する\n      4/4 　選んだモデルを、いつ・どう直すか\n    - lec02-main-p055 · PDF p.55 · FT の落とし穴：直したところ以外が、壊れていないか\n      4/4 　選んだモデルを、いつ・どう直すか\n    - lec02-main-p056 · PDF p.56 · クイズ 4 ： Fine-Tuning が一番向いているのは？\n      クイズ 4/4\n    - lec02-main-p057 · PDF p.57 · クイズ 4 ： Fine-Tuning が一番向いているのは？（答え）\n      クイズ 4/4\n    - lec02-main-p058 · PDF p.58 · Fine-Tuning する前のチェックリスト\n      4/4 　選んだモデルを、いつ・どう直すか\n    - lec02-main-p059 · PDF p.59 · 第 2 回のまとめ： 4 つの芯と、明日やること\n      まとめ\n    - lec02-main-p060 · PDF p.60 · 今日の演習： QLoRA で出力形式を矯正し、効果を測る\n      演習\n    - lec02-main-p061 · PDF p.61 · 演習の進め方と提出物（仮）\n      演習\n    - lec02-main-p062 · PDF p.62 · 次回： AI エージェント。今日の性質が設計の前提になる\n      次回予告\n[tool call]   browse_tree({'node_id': 'lec02-main-p051'})\n[目次を開く] AIエンジニアリング実践講座2026 資料 → 基盤モデルの仕組み → 選んだモデルを、いつ・どう直すか → PEFT ：モデル全体ではなく、一部だけを学習する\n    （末端ページ・本文771文字を取得）\n[tool call]   browse_tree({'node_id': 'lec02-main-p052'})\n[目次を開く] AIエンジニアリング実践講座2026 資料 → 基盤モデルの仕組み → 選んだモデルを、いつ・どう直すか → LoRA と QLoRA ：大きなモデルも GPU 1 台で調整できる\n    （末端ページ・本文717文字を取得）\n[time] 回答完了まで 8.14 秒（検索・埋め込みを含む）\n[usage] 入力 13,706 tokens / 出力 358 tokens / モデル応答 6 回\n[cost] 生成APIの推定コスト: $0.005007 USD（埋め込み・索引構築分は含まない）\n",
+        "stderr": "",
+        "wall_seconds": 10.527
+      }
+    ]
+  },
+  {
+    "question_id": 1,
+    "question": "第2回の説明では、LoRAは何を固定し何を学習しますか？QLoRAは何を加えますか？",
+    "condition": "graph",
+    "top_k": 5,
+    "neighbors": false,
+    "attempts": [
+      {
+        "returncode": 0,
+        "stdout": "[model] gemini-3.5-flash-lite\n第2回の講義資料によると、LoRAとQLoRAの仕組みや学習対象について以下のように説明されています。\n\n* **LoRAは何を固定し、何を学習するか**\n  * **固定するもの：** 元のモデルの重み（本体）は固定し、学習しません。\n  * **学習するもの：** 変化分を表す小さな行列（低ランクの行列ペアなど、追加の小さなパラメータ部分）だけを学習します。（第2回・PDF p.51, 52）\n\n* **QLoRAは何を加えるか**\n  * LoRAの手法に加えて、**「元の重みを4bitに圧縮（量子化）すること」**を加えます。これにより、さらに少ないメモリ（GPU 1台）で大きなモデルの調整が可能になります。（第2回・PDF p.51, 52）\n\n--- trace ---\n[tool call]   search_graph({'query': 'LoRA QLoRA 固定 学習'})\n[tool return] search_graph -> {\"seeds\": [{\"page_id\": \"lec02-main-p052\", \"document_id\": \"lec02-main\", \"lecture\": 2, \"document_title\": \"基盤モデルの仕組み\", \"sec…\n[time] 回答完了まで 3.11 秒（検索・埋め込みを含む）\n[usage] 入力 5,771 tokens / 出力 206 tokens / モデル応答 2 回\n[cost] 生成APIの推定コスト: $0.002246 USD（埋め込み・索引構築分は含まない）\n",
+        "stderr": "",
+        "wall_seconds": 5.648
+      }
+    ]
+  }
+]
