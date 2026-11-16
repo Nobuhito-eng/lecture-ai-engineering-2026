@@ -1,0 +1,50 @@
+# 実行日時: 2026-11-04T02:32:48+09:00
+# コマンド: uv run python -m app.agent --trace "LoRAとQLoRAの違いを用語集で調べて、学習ログに保存して"
+# 確認への入力: 'y'
+# 終了コード: 0
+
+[model] gemini-3.5-flash-lite
+
+[承認待ち] モデルが save_learning_log の実行を求めています（learning_log/ にファイルを保存します）
+  content: ### LoRA と QLoRA の違い
+    
+    - **LoRA**
+      - 事前学習済みの重みを固定し、重みの更新分を小さな低ランク行列の積で表してその部分のみを学習するPEFT手法です。学習パラメータやアダプタのファイルサイズを小さく抑えられます。
+    - **QLoRA**
+      - ベースモデルの重みを4ビットなどに量子化（Quantization）してメモリを大きく節約した上で、LoRAによる学習を行う手法です。これにより、より大きなモデルを比較的小さなGPUでも扱えるようになります。
+  lecture: 2
+  title: LoRAとQLoRAの違い
+保存してよいですか？ [y/N]: [approval]    save_learning_log -> 承認
+講座の用語集に基づき、LoRAとQLoRAの違いをまとめました。
+
+- **LoRA**
+  - 事前学習済みの重みを固定したまま、重みの更新分を2つの小さな行列（低ランク行列）の積で表し、その小さな行列だけを学習するPEFT手法です。学習するパラメータが少なく、アダプタも小さなファイルで保存できます。
+- **QLoRA**
+  - ベースモデルの重みを4ビットなどに量子化してメモリを節約した上で、LoRAによる学習を行う手法です。より大きなモデルを小さなGPUでも扱えるようにします。
+
+ご要望に基づき、上記の学びを学習ログに保存しました。
+
+（関係する回：第2回）
+
+--- trace ---
+[tool call]   search_glossary({'query': 'LoRA'})
+[tool call]   search_glossary({'query': 'QLoRA'})
+[tool return] search_glossary -> [{"term": "LoRA", "lecture": 2, "definition": "事前学習済みの重みは固定したまま、重みの更新分を2つの小さな行列の積（低ランク行列）で表し、その小さな行列だけを学習するPEFT手法。学習するパラ…
+[tool return] search_glossary -> [{"term": "QLoRA", "lecture": 2, "definition": "ベースモデルの重みを4ビットなどに量子化してメモリを節約したうえで、LoRAで学習する手法。より大きなモデルを小さなGPUで扱える。本講座の第2…
+[tool call]   save_learning_log({'content': '### LoRA と QLoRA の違い\n\n- **LoRA**\n  - 事前学習済みの重みを固定し、重みの更新分を小さな低ランク行列の積で表してその部分のみを学習するPEFT手法です。学習パラメータやアダプタのファイルサイズを小さく抑えられます。\n- **QLoRA**\n  - ベースモデルの重みを4ビットなどに量子化（Quantization）してメモリを大きく節約した上で、LoRAによる学習を行う手法です。これにより、より大きなモデルを比較的小さなGPUでも扱えるようになります。', 'lecture': 2, 'title': 'LoRAとQLoRAの違い'})
+[tool return] save_learning_log -> 学習ログを保存しました: learning_log/20261103-173336_LoRAとQLoRAの違い.md…
+[usage] RunUsage(cost=Decimal('0.0018746'), details={'text_prompt_tokens': 3282}, input_text_tokens=3282, input_tokens=3282, output_tokens=356, requests=3, tool_calls=3)
+
+# learning_log/ に増えたファイル: ['20261103-173336_LoRAとQLoRAの違い.md']
+# --- 20261103-173336_LoRAとQLoRAの違い.md ---
+# LoRAとQLoRAの違い
+
+- 日時: 2026-11-03T17:33:36+00:00
+- 関係する回: 第2回
+
+### LoRA と QLoRA の違い
+
+- **LoRA**
+  - 事前学習済みの重みを固定し、重みの更新分を小さな低ランク行列の積で表してその部分のみを学習するPEFT手法です。学習パラメータやアダプタのファイルサイズを小さく抑えられます。
+- **QLoRA**
+  - ベースモデルの重みを4ビットなどに量子化（Quantization）してメモリを大きく節約した上で、LoRAによる学習を行う手法です。これにより、より大きなモデルを比較的小さなGPUでも扱えるようになります。

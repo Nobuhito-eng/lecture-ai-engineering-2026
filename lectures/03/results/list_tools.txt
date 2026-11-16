@@ -1,0 +1,32 @@
+$ uv run python -m app.agent --list-tools
+モデルに見えているツール: 4 個
+
+[search_glossary]
+  講座の用語集から用語を検索し、定義と、どの回で扱うかを返す。
+  
+  AIエンジニアリングの用語や、この講座（AIE2026）に固有の言葉について
+  答える前に使うこと。query には調べたい用語を1つだけ入れる（例: "LoRA"）。
+  引数: {"query": {"type": "string"}}
+
+[get_lecture_summary]
+  指定した回（1始まりの整数）の講義の要点を返す。
+  
+  「第3回では何を学ぶ？」のように、回の内容や関係を聞かれたときに使う。
+  引数: {"lecture": {"type": "integer"}}
+
+[make_quiz]
+  指定した回の用語集から用語を1つ選び、確認問題と答えを返す。
+  
+  「第2回の確認問題を出して」のように、復習用の問題を求められたときに使う。
+  lecture には回の番号（1始まりの整数）を入れる。
+  引数: {"lecture": {"type": "integer"}}
+
+[save_learning_log]
+  学習の記録を learning_log/ フォルダに Markdown ファイルとして保存する。
+  
+  利用者が「学習ログに残して」「今日の学びを記録して」のように、記録や保存をはっきり
+  頼んだときだけ使う。質問に答えるだけのときは使わない。
+  実行の前に利用者の承認が必要で、拒否されたら保存されない。
+  title には記録の短い見出し（例: "LoRAとQLoRAの違い"）、content には記録する本文
+  （Markdown 可）、lecture には関係する回の番号（1始まりの整数。分からなければ 0）を入れる。
+  引数: {"title": {"type": "string"}, "content": {"type": "string"}, "lecture": {"default": 0, "type": "integer"}}

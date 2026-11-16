@@ -1,0 +1,9 @@
+{
+  "date_jst": "2026-11-04T03:06:04+09:00",
+  "model": "gemini-3.5-flash-lite",
+  "python": "3.12.16",
+  "platform": "Linux-6.8.0-1064-azure-x86_64-with-glibc2.41",
+  "codespaces": true,
+  "pydantic-ai-slim": "2.57.0",
+  "google-genai": "2.31.0"
+}

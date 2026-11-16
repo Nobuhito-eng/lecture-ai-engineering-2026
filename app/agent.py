@@ -3,6 +3,8 @@
 使い方:
     uv run python -m app.agent "AIE2026の講座で使う「lecNN-start タグ」とは何ですか？"
     uv run python -m app.agent --trace "LoRAとQLoRAの違いは？"   # ツール呼び出しを表示
+    uv run python -m app.agent --trace "第2回の内容から確認問題を1問出して"   # 第3回 演習: make_quiz
+    uv run python -m app.agent --trace "LoRAとQLoRAの違いを学習ログに保存して"  # 第3回 宿題: 保存前に y/N を聞く
     uv run python -m app.agent --mcp --trace "LoRAとは？"        # 第5回: ツールを MCP サーバーから受け取る
     uv run python -m app.agent --mcp --list-tools               # 第5回: モデルに見えるツール一覧（APIキー不要）
 
@@ -16,7 +18,7 @@ import inspect
 import json
 from pathlib import Path
 
-from pydantic_ai import Agent
+from pydantic_ai import Agent, DeferredToolRequests, ToolDenied
 from pydantic_ai.exceptions import ModelHTTPError
 from fastmcp import Client
 from pydantic_ai.mcp import MCPToolset, StdioTransport
@@ -32,17 +34,70 @@ INSTRUCTIONS = """\
 あなたはAIエンジニアリング講座（AIE2026）の学習支援エージェントです。
 - 用語や講座に固有のことを答える前に、必ず search_glossary で用語集を確認する。
 - 回の内容を聞かれたら get_lecture_summary を使う。
+- 確認問題を求められたら make_quiz を使う。
+- 学習の記録を残すよう頼まれたら save_learning_log を使う。頼まれていないときは保存しない。
 - 用語集に見つからないことは、推測で断定せず「用語集にはない」と伝える。
 - 回答の最後に、関係する回（第N回）を示す。
 - 宿題の答えそのものは書かず、考え方のヒントで導く。
 """
 
 # モデルは実行時に渡す（テストではAPIを呼ばない TestModel に差し替えるため）
-agent = Agent(instructions=INSTRUCTIONS)
+# 第3回 宿題（実装）: 承認待ちで止まったときは DeferredToolRequests が返るので、output_type に加える
+agent = Agent(instructions=INSTRUCTIONS, output_type=[str, DeferredToolRequests])
 agent.tool_plain(tools.search_glossary)
 agent.tool_plain(tools.get_lecture_summary)
 
-# TODO(第3回 演習): tools.py に make_quiz を作り、ここで登録しよう
+# 第3回 演習: 確認問題を作るツール
+agent.tool_plain(tools.make_quiz)
+
+# 第3回 宿題（実装）: ファイルへの保存は取り消しにくいので、実行の前に利用者の承認を挟む
+agent.tool_plain(tools.save_learning_log, requires_approval=True)
+
+DENIED_MESSAGE = "利用者が承認しなかったため、保存していません。保存しなかったことを利用者に伝えてください。"
+MAX_APPROVAL_ROUNDS = 5
+
+
+def ask_approval(call: ToolCallPart) -> bool:
+    """承認が必要なツール呼び出しの中身を表示し、実行してよいかを利用者に聞く（CLI 用）。"""
+    print(f"\n[承認待ち] モデルが {call.tool_name} の実行を求めています（learning_log/ にファイルを保存します）")
+    for key, value in call.args_as_dict().items():
+        text = str(value).replace("\n", "\n    ")
+        print(f"  {key}: {text}")
+    try:
+        answer = input("保存してよいですか？ [y/N]: ")
+    except EOFError:  # 入力できない環境では、安全側（拒否）に倒す
+        answer = ""
+    return answer.strip().lower() in ("y", "yes")
+
+
+def run_with_approval(target: Agent, question: str, model, approve=ask_approval):
+    """承認待ち（DeferredToolRequests）で止まったら approve で可否を決め、結果を渡して続きを実行する。
+
+    approve は ToolCallPart を受け取って True（承認）/ False（拒否）を返す関数。
+    CLI では ask_approval（input で聞く）、テストでは lambda call: True などに差し替える。
+    """
+    result = target.run_sync(question, model=model)
+    for _ in range(MAX_APPROVAL_ROUNDS):
+        if not isinstance(result.output, DeferredToolRequests):
+            return result
+        requests = result.output
+        if requests.calls:
+            raise RuntimeError("外部で実行するツール（CallDeferred）には対応していません")
+        approvals = {}
+        for call in requests.approvals:
+            approved = approve(call)
+            print(f"[approval]    {call.tool_name} -> {'承認' if approved else '拒否'}")
+            approvals[call.tool_call_id] = True if approved else ToolDenied(DENIED_MESSAGE)
+        # これまでの会話履歴と承認の結果を渡して、止まったところから続ける（usage も引き継いで合計する）
+        result = target.run_sync(
+            message_history=result.all_messages(),
+            deferred_tool_results=requests.build_results(approvals=approvals),
+            model=model,
+            usage=result.usage,
+        )
+    if isinstance(result.output, DeferredToolRequests):
+        raise RuntimeError(f"承認待ちが {MAX_APPROVAL_ROUNDS} 回を超えたので中断しました")
+    return result
 
 # 第5回: 使う MCP サーバーの設定ファイル。Claude Desktop や Cursor と同じ "mcpServers" 形式
 MCP_CONFIG = Path(__file__).resolve().parent / "mcp_servers.json"
@@ -128,7 +183,7 @@ def main() -> None:
     if args.mcp:
         print("[tools] MCP サーバー（app/mcp_servers.json）")
     try:
-        result = target.run_sync(args.question, model=build_model())
+        result = run_with_approval(target, args.question, model=build_model())
     except ModelHTTPError as e:
         print(api_error_message(e.status_code, str(e.body)[:200]))
         raise SystemExit(1)

@@ -5,11 +5,19 @@
 """
 
 import json
+import random
+import re
+from datetime import datetime
 from functools import cache
 from pathlib import Path
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 MAX_RESULTS = 3
+
+# 第3回 宿題（実装）: 学習ログの保存先。.gitignore 済み。テストでは一時フォルダに差し替える
+LEARNING_LOG_DIR = Path(__file__).resolve().parent.parent / "learning_log"
+MAX_LOG_TITLE_CHARS = 80
+MAX_LOG_CONTENT_CHARS = 20_000
 
 
 @cache
@@ -77,3 +85,72 @@ def get_lecture_summary(lecture: int) -> str:
         available = sorted(p.stem for p in (DATA_DIR / "lectures").glob("*.md"))
         return f"第{lecture}回の要点はまだありません。用意されている回: {', '.join(available)}"
     return path.read_text(encoding="utf-8")
+
+
+def make_quiz(lecture: int) -> str:
+    """指定した回の用語集から用語を1つ選び、確認問題と答えを返す。
+
+    「第2回の確認問題を出して」のように、復習用の問題を求められたときに使う。
+    lecture には回の番号（1始まりの整数）を入れる。
+    """
+    terms = [e for e in load_glossary() if e["lecture"] == lecture]
+    if not terms:
+        available = sorted({e["lecture"] for e in load_glossary()})
+        return (
+            f"第{lecture}回の用語は用語集にありません。"
+            f"問題を作れる回: {', '.join(f'第{n}回' for n in available)}"
+        )
+    term = random.choice(terms)
+    return json.dumps(
+        {
+            "lecture": lecture,
+            "question": f"「{term['term']}」の意味は？",
+            "answer": term["definition"],
+        },
+        ensure_ascii=False,
+    )
+
+
+def _log_filename(title: str, now: datetime) -> str:
+    """タイトルからファイル名を作る。文字・数字・ハイフン以外（/ や . を含む）は - に置き換える。"""
+    slug = re.sub(r"[^\w\-]+", "-", title).strip("-_")[:40] or "log"
+    return f"{now:%Y%m%d-%H%M%S}_{slug}"
+
+
+def save_learning_log(title: str, content: str, lecture: int = 0) -> str:
+    """学習の記録を learning_log/ フォルダに Markdown ファイルとして保存する。
+
+    利用者が「学習ログに残して」「今日の学びを記録して」のように、記録や保存をはっきり
+    頼んだときだけ使う。質問に答えるだけのときは使わない。
+    実行の前に利用者の承認が必要で、拒否されたら保存されない。
+    title には記録の短い見出し（例: "LoRAとQLoRAの違い"）、content には記録する本文
+    （Markdown 可）、lecture には関係する回の番号（1始まりの整数。分からなければ 0）を入れる。
+    """
+    title, content = title.strip(), content.strip()
+    if not title or not content:
+        return "保存していません。title と content の両方を指定してください。"
+    if len(title) > MAX_LOG_TITLE_CHARS or len(content) > MAX_LOG_CONTENT_CHARS:
+        return (
+            f"保存していません。title は{MAX_LOG_TITLE_CHARS}文字以内、"
+            f"content は{MAX_LOG_CONTENT_CHARS}文字以内にしてください。"
+        )
+
+    log_dir = LEARNING_LOG_DIR
+    log_dir.mkdir(parents=True, exist_ok=True)
+    now = datetime.now().astimezone()
+    base = _log_filename(title, now)
+    lines = [f"# {title}", "", f"- 日時: {now.isoformat(timespec='seconds')}"]
+    if lecture > 0:
+        lines.append(f"- 関係する回: 第{lecture}回")
+    text = "\n".join(lines) + "\n\n" + content + "\n"
+
+    # 既存の記録は上書きしない（同じ秒・同じタイトルなら連番を付ける）
+    for n in range(1, 100):
+        path = log_dir / (f"{base}.md" if n == 1 else f"{base}_{n}.md")
+        try:
+            with open(path, "x", encoding="utf-8") as f:
+                f.write(text)
+        except FileExistsError:
+            continue
+        return f"学習ログを保存しました: {log_dir.name}/{path.name}"
+    return "保存していません。同じ名前のファイルが多すぎます。"
