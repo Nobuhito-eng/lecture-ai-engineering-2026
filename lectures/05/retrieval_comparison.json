@@ -1,0 +1,481 @@
+[
+  {
+    "question": "第2回の説明では、LoRAは何を固定し何を学習しますか？QLoRAは何を加えますか？",
+    "seconds_for_top5_with_embedding": 0.526,
+    "top5": [
+      {
+        "page_id": "lec02-main-p052",
+        "document_id": "lec02-main",
+        "page": 52,
+        "title": "LoRA と QLoRA ：大きなモデルも GPU 1 台で調整できる",
+        "distance": 0.2075018286705017
+      },
+      {
+        "page_id": "lec02-main-p051",
+        "document_id": "lec02-main",
+        "page": 51,
+        "title": "PEFT ：モデル全体ではなく、一部だけを学習する",
+        "distance": 0.22917483747005463
+      },
+      {
+        "page_id": "lec02-main-p060",
+        "document_id": "lec02-main",
+        "page": 60,
+        "title": "今日の演習： QLoRA で出力形式を矯正し、効果を測る",
+        "distance": 0.24821427464485168
+      },
+      {
+        "page_id": "lec02-main-p061",
+        "document_id": "lec02-main",
+        "page": 61,
+        "title": "演習の進め方と提出物（仮）",
+        "distance": 0.28419947624206543
+      },
+      {
+        "page_id": "lec02-main-p047",
+        "document_id": "lec02-main",
+        "page": 47,
+        "title": "根拠と諸説：知識の追加は RAG が効きやすい",
+        "distance": 0.2989999055862427
+      }
+    ],
+    "top3": [
+      {
+        "page_id": "lec02-main-p052",
+        "document_id": "lec02-main",
+        "page": 52,
+        "title": "LoRA と QLoRA ：大きなモデルも GPU 1 台で調整できる",
+        "distance": 0.2075018286705017
+      },
+      {
+        "page_id": "lec02-main-p051",
+        "document_id": "lec02-main",
+        "page": 51,
+        "title": "PEFT ：モデル全体ではなく、一部だけを学習する",
+        "distance": 0.22917483747005463
+      },
+      {
+        "page_id": "lec02-main-p060",
+        "document_id": "lec02-main",
+        "page": 60,
+        "title": "今日の演習： QLoRA で出力形式を矯正し、効果を測る",
+        "distance": 0.24821427464485168
+      }
+    ],
+    "top5_with_neighbors": [
+      {
+        "page_id": "lec02-main-p052",
+        "document_id": "lec02-main",
+        "page": 52,
+        "title": "LoRA と QLoRA ：大きなモデルも GPU 1 台で調整できる",
+        "distance": 0.2075018286705017
+      },
+      {
+        "page_id": "lec02-main-p051",
+        "document_id": "lec02-main",
+        "page": 51,
+        "title": "PEFT ：モデル全体ではなく、一部だけを学習する",
+        "distance": 0.22917483747005463
+      },
+      {
+        "page_id": "lec02-main-p060",
+        "document_id": "lec02-main",
+        "page": 60,
+        "title": "今日の演習： QLoRA で出力形式を矯正し、効果を測る",
+        "distance": 0.24821427464485168
+      },
+      {
+        "page_id": "lec02-main-p061",
+        "document_id": "lec02-main",
+        "page": 61,
+        "title": "演習の進め方と提出物（仮）",
+        "distance": 0.28419947624206543
+      },
+      {
+        "page_id": "lec02-main-p047",
+        "document_id": "lec02-main",
+        "page": 47,
+        "title": "根拠と諸説：知識の追加は RAG が効きやすい",
+        "distance": 0.2989999055862427
+      },
+      {
+        "page_id": "lec02-main-p053",
+        "document_id": "lec02-main",
+        "page": 53,
+        "title": "チャットボットの場合：何を FT し、何を FT しないか",
+        "neighbor_of": "lec02-main-p052",
+        "page_offset": 1
+      },
+      {
+        "page_id": "lec02-main-p050",
+        "document_id": "lec02-main",
+        "page": 50,
+        "title": "判断の順番：測る → 分ける → プロンプト → Fine-Tuning",
+        "neighbor_of": "lec02-main-p051",
+        "page_offset": -1
+      },
+      {
+        "page_id": "lec02-main-p059",
+        "document_id": "lec02-main",
+        "page": 59,
+        "title": "第 2 回のまとめ： 4 つの芯と、明日やること",
+        "neighbor_of": "lec02-main-p060",
+        "page_offset": -1
+      },
+      {
+        "page_id": "lec02-main-p062",
+        "document_id": "lec02-main",
+        "page": 62,
+        "title": "次回： AI エージェント。今日の性質が設計の前提になる",
+        "neighbor_of": "lec02-main-p061",
+        "page_offset": 1
+      },
+      {
+        "page_id": "lec02-main-p046",
+        "document_id": "lec02-main",
+        "page": 46,
+        "title": "小規模な FT は振る舞いに強く、知識の追加は苦手",
+        "neighbor_of": "lec02-main-p047",
+        "page_offset": -1
+      },
+      {
+        "page_id": "lec02-main-p048",
+        "document_id": "lec02-main",
+        "page": 48,
+        "title": "継続事前学習（ CPT ）：知識・言語を足す追加学習",
+        "neighbor_of": "lec02-main-p047",
+        "page_offset": 1
+      }
+    ]
+  },
+  {
+    "question": "第3回の例では、コンパクションとセッションをまたぐメモリはどう違いますか。日々のメモはすべて長期メモリに入りますか",
+    "seconds_for_top5_with_embedding": 0.436,
+    "top5": [
+      {
+        "page_id": "lec03-main-p065",
+        "document_id": "lec03-main",
+        "page": 65,
+        "title": "補足：メモリと Context Engineering の最新動向",
+        "distance": 0.26752209663391113
+      },
+      {
+        "page_id": "lec03-main-p039",
+        "document_id": "lec03-main",
+        "page": 39,
+        "title": "実装例：Claude",
+        "distance": 0.269599586725235
+      },
+      {
+        "page_id": "lec03-main-p038",
+        "document_id": "lec03-main",
+        "page": 38,
+        "title": "メモリがないと、毎回ゼロからやり直しになる",
+        "distance": 0.2794897258281708
+      },
+      {
+        "page_id": "lec03-main-p040",
+        "document_id": "lec03-main",
+        "page": 40,
+        "title": "実装例：OpenClaw",
+        "distance": 0.2919212579727173
+      },
+      {
+        "page_id": "lec03-main-p013",
+        "document_id": "lec03-main",
+        "page": 13,
+        "title": "メモリ",
+        "distance": 0.3039143979549408
+      }
+    ],
+    "top3": [
+      {
+        "page_id": "lec03-main-p065",
+        "document_id": "lec03-main",
+        "page": 65,
+        "title": "補足：メモリと Context Engineering の最新動向",
+        "distance": 0.26752209663391113
+      },
+      {
+        "page_id": "lec03-main-p039",
+        "document_id": "lec03-main",
+        "page": 39,
+        "title": "実装例：Claude",
+        "distance": 0.269599586725235
+      },
+      {
+        "page_id": "lec03-main-p038",
+        "document_id": "lec03-main",
+        "page": 38,
+        "title": "メモリがないと、毎回ゼロからやり直しになる",
+        "distance": 0.2794897258281708
+      }
+    ],
+    "top5_with_neighbors": [
+      {
+        "page_id": "lec03-main-p065",
+        "document_id": "lec03-main",
+        "page": 65,
+        "title": "補足：メモリと Context Engineering の最新動向",
+        "distance": 0.26752209663391113
+      },
+      {
+        "page_id": "lec03-main-p039",
+        "document_id": "lec03-main",
+        "page": 39,
+        "title": "実装例：Claude",
+        "distance": 0.269599586725235
+      },
+      {
+        "page_id": "lec03-main-p038",
+        "document_id": "lec03-main",
+        "page": 38,
+        "title": "メモリがないと、毎回ゼロからやり直しになる",
+        "distance": 0.2794897258281708
+      },
+      {
+        "page_id": "lec03-main-p040",
+        "document_id": "lec03-main",
+        "page": 40,
+        "title": "実装例：OpenClaw",
+        "distance": 0.2919212579727173
+      },
+      {
+        "page_id": "lec03-main-p013",
+        "document_id": "lec03-main",
+        "page": 13,
+        "title": "メモリ",
+        "distance": 0.3039143979549408
+      },
+      {
+        "page_id": "lec03-main-p064",
+        "document_id": "lec03-main",
+        "page": 64,
+        "title": "補足：長時間タスクの実行能力の最新動向",
+        "neighbor_of": "lec03-main-p065",
+        "page_offset": -1
+      },
+      {
+        "page_id": "lec03-main-p066",
+        "document_id": "lec03-main",
+        "page": 66,
+        "title": "補足：設定ファイルの標準化（AGENTS.md・Skills）の最新動向",
+        "neighbor_of": "lec03-main-p065",
+        "page_offset": 1
+      },
+      {
+        "page_id": "lec03-main-p037",
+        "document_id": "lec03-main",
+        "page": 37,
+        "title": "Part 6 メモリ",
+        "neighbor_of": "lec03-main-p038",
+        "page_offset": -1
+      },
+      {
+        "page_id": "lec03-main-p041",
+        "document_id": "lec03-main",
+        "page": 41,
+        "title": "Skill：繰り返す作業の手順をファイルに保存しておく",
+        "neighbor_of": "lec03-main-p040",
+        "page_offset": 1
+      },
+      {
+        "page_id": "lec03-main-p012",
+        "document_id": "lec03-main",
+        "page": 12,
+        "title": "ループ：ツールの結果を自動的にモデルに入力する",
+        "neighbor_of": "lec03-main-p013",
+        "page_offset": -1
+      },
+      {
+        "page_id": "lec03-main-p014",
+        "document_id": "lec03-main",
+        "page": 14,
+        "title": "エージェント＝モデル＋ハーネス",
+        "neighbor_of": "lec03-main-p013",
+        "page_offset": 1
+      }
+    ]
+  },
+  {
+    "question": "今回作ったRAGの実測平均応答時間と正答率を教えてください",
+    "seconds_for_top5_with_embedding": 0.454,
+    "top5": [
+      {
+        "page_id": "lec02-main-p013",
+        "document_id": "lec02-main",
+        "page": 13,
+        "title": "帰結①：同じ質問でも、答えは毎回変わる",
+        "distance": 0.2765786349773407
+      },
+      {
+        "page_id": "lec03-main-p064",
+        "document_id": "lec03-main",
+        "page": 64,
+        "title": "補足：長時間タスクの実行能力の最新動向",
+        "distance": 0.30144140124320984
+      },
+      {
+        "page_id": "lec02-main-p024",
+        "document_id": "lec02-main",
+        "page": 24,
+        "title": "事後学習の前と後：同じ質問でも、ふるまいが変わる",
+        "distance": 0.3059234321117401
+      },
+      {
+        "page_id": "lec01-main-p019",
+        "document_id": "lec01-main",
+        "page": 19,
+        "title": "研究室の実例：大規模講義の質問に答えるチャットボット",
+        "distance": 0.30765172839164734
+      },
+      {
+        "page_id": "lec02-main-p003",
+        "document_id": "lec02-main",
+        "page": 3,
+        "title": "チャットボットを作ると、すぐにこんな「厄介さ」に出会う",
+        "distance": 0.3102003037929535
+      }
+    ],
+    "top3": [
+      {
+        "page_id": "lec02-main-p013",
+        "document_id": "lec02-main",
+        "page": 13,
+        "title": "帰結①：同じ質問でも、答えは毎回変わる",
+        "distance": 0.2765786349773407
+      },
+      {
+        "page_id": "lec03-main-p064",
+        "document_id": "lec03-main",
+        "page": 64,
+        "title": "補足：長時間タスクの実行能力の最新動向",
+        "distance": 0.30144140124320984
+      },
+      {
+        "page_id": "lec02-main-p024",
+        "document_id": "lec02-main",
+        "page": 24,
+        "title": "事後学習の前と後：同じ質問でも、ふるまいが変わる",
+        "distance": 0.3059234321117401
+      }
+    ],
+    "top5_with_neighbors": [
+      {
+        "page_id": "lec02-main-p013",
+        "document_id": "lec02-main",
+        "page": 13,
+        "title": "帰結①：同じ質問でも、答えは毎回変わる",
+        "distance": 0.2765786349773407
+      },
+      {
+        "page_id": "lec03-main-p064",
+        "document_id": "lec03-main",
+        "page": 64,
+        "title": "補足：長時間タスクの実行能力の最新動向",
+        "distance": 0.30144140124320984
+      },
+      {
+        "page_id": "lec02-main-p024",
+        "document_id": "lec02-main",
+        "page": 24,
+        "title": "事後学習の前と後：同じ質問でも、ふるまいが変わる",
+        "distance": 0.3059234321117401
+      },
+      {
+        "page_id": "lec01-main-p019",
+        "document_id": "lec01-main",
+        "page": 19,
+        "title": "研究室の実例：大規模講義の質問に答えるチャットボット",
+        "distance": 0.30765172839164734
+      },
+      {
+        "page_id": "lec02-main-p003",
+        "document_id": "lec02-main",
+        "page": 3,
+        "title": "チャットボットを作ると、すぐにこんな「厄介さ」に出会う",
+        "distance": 0.3102003037929535
+      },
+      {
+        "page_id": "lec02-main-p012",
+        "document_id": "lec02-main",
+        "page": 12,
+        "title": "サンプリング：確率からどう選ぶかで、答えの性格が変わる",
+        "neighbor_of": "lec02-main-p013",
+        "page_offset": -1
+      },
+      {
+        "page_id": "lec02-main-p014",
+        "document_id": "lec02-main",
+        "page": 14,
+        "title": "帰結②：知らないことも、それらしく答えてしまう",
+        "neighbor_of": "lec02-main-p013",
+        "page_offset": 1
+      },
+      {
+        "page_id": "lec03-main-p063",
+        "document_id": "lec03-main",
+        "page": 63,
+        "title": "補足：ツール呼び出しの最新動向",
+        "neighbor_of": "lec03-main-p064",
+        "page_offset": -1
+      },
+      {
+        "page_id": "lec03-main-p065",
+        "document_id": "lec03-main",
+        "page": 65,
+        "title": "補足：メモリと Context Engineering の最新動向",
+        "neighbor_of": "lec03-main-p064",
+        "page_offset": 1
+      },
+      {
+        "page_id": "lec02-main-p023",
+        "document_id": "lec02-main",
+        "page": 23,
+        "title": "事後学習：答え方はここで決まる。だから「直す」ことができる",
+        "neighbor_of": "lec02-main-p024",
+        "page_offset": -1
+      },
+      {
+        "page_id": "lec02-main-p025",
+        "document_id": "lec02-main",
+        "page": 25,
+        "title": "推論時計算：使うときに「考えさせる」と、難問に強くなる",
+        "neighbor_of": "lec02-main-p024",
+        "page_offset": 1
+      },
+      {
+        "page_id": "lec01-main-p018",
+        "document_id": "lec01-main",
+        "page": 18,
+        "title": "研究室の実例： LLM でロボットを動かす",
+        "neighbor_of": "lec01-main-p019",
+        "page_offset": -1
+      },
+      {
+        "page_id": "lec01-main-p020",
+        "document_id": "lec01-main",
+        "page": 20,
+        "title": "どちらのプロジェクトも、学部生が大活躍している",
+        "neighbor_of": "lec01-main-p019",
+        "page_offset": 1
+      },
+      {
+        "page_id": "lec02-main-p002",
+        "document_id": "lec02-main",
+        "page": 2,
+        "title": "今日は「 [3] モデル学習」の中身、基盤モデルそのものを扱う",
+        "neighbor_of": "lec02-main-p003",
+        "page_offset": -1
+      },
+      {
+        "page_id": "lec02-main-p004",
+        "document_id": "lec02-main",
+        "page": 4,
+        "title": "今日の 4 つの問い（各 15 分）",
+        "neighbor_of": "lec02-main-p003",
+        "page_offset": 1
+      }
+    ]
+  }
+]

@@ -4,11 +4,30 @@ APIキーやモデル名はコードに書かず、環境変数から読み込�
 """
 
 import os
+from pathlib import Path
 
 # 既定モデル。環境変数 AIE_MODEL を設定すると切り替えられる。
 #   例: export AIE_MODEL=gemini-3.5-flash
 DEFAULT_MODEL = "gemini-3.5-flash-lite"
 MODEL = os.getenv("AIE_MODEL", DEFAULT_MODEL)
+
+# 第5回: 1ページを1チャンクとして検索する。索引はscripts/build_rag_index.pyで作成する。
+ROOT = Path(__file__).resolve().parent.parent
+RAG_SOURCE = ROOT / "data/rag_data/lectures.json"
+RAG_TREE = ROOT / "data/rag_data/tree.json"
+RAG_GRAPH = ROOT / "data/rag_data/graph.json"
+RAG_DB = Path(os.getenv("AIE_RAG_DB", str(ROOT / "data/rag_data/index.sqlite3")))
+RAG_DOCUMENT_IDS = ("lec01-main", "lec02-main", "lec03-main")
+# 基礎：通常の5件から3件に変更。比較時は環境変数で5件に戻せる。
+RAG_TOP_K = int(os.getenv("AIE_RAG_TOP_K", "3"))
+RAG_INCLUDE_NEIGHBORS = os.getenv("AIE_RAG_INCLUDE_NEIGHBORS", "0") == "1"
+GRAPH_START_K = 3
+GRAPH_HOPS = 2
+GRAPH_MAX_RESULTS = 10
+EMBEDDING_MODEL = "gemini-embedding-001"
+EMBEDDING_DIMENSIONS = 768
+# 2,048トークンの上限に対し、タスク指定等の分を残す。超過時は切り捨てず停止する。
+EMBEDDING_MAX_TOKENS = 2000
 
 
 def api_error_message(status: int, detail: str = "") -> str:
