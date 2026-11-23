@@ -28,6 +28,38 @@ server = MCPServer(
 server.tool()(tools.search_glossary)
 
 # TODO(宿題・基礎): get_lecture_summary も公開しよう
+server.tool()(tools.get_lecture_summary)
+
+
+@server.tool()
+def make_quiz(lecture: int) -> str:
+    """指定した回の用語をもとに、理解を確かめるクイズを最大3問作る。
+
+    講座の復習やクイズを求められたときに使う。lecture は第何回かを表す整数。
+    用語集に登録された回のみ対応し、登録がない回は利用可能な回を返す。
+    各問題は用語の説明を求める形式で、解答は含めない。
+    """
+    glossary = tools.load_glossary()
+    available = sorted({entry["lecture"] for entry in glossary})
+    if not available:
+        return "用語集が空のため、クイズを作れません。"
+
+    available_text = "、".join(f"第{number}回" for number in available)
+    if lecture < available[0] or lecture > available[-1]:
+        return f"第{lecture}回は範囲外です。クイズを作れる回：{available_text}。"
+
+    entries = [entry for entry in glossary if entry["lecture"] == lecture]
+    if not entries:
+        return (
+            f"第{lecture}回の用語は用語集に登録されていないため、クイズを作れません。"
+            f"クイズを作れる回：{available_text}。"
+        )
+
+    questions = [
+        f"{number}. 「{entry['term']}」とは何か、説明してください。"
+        for number, entry in enumerate(entries[:3], start=1)
+    ]
+    return "\n".join([f"第{lecture}回の復習クイズ", *questions])
 
 
 def main() -> None:
